@@ -24,4 +24,16 @@ public class Level_6 {
     public String getColor() {
         return color;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setNo_received(String no_received) {
+        this.no_received = no_received;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

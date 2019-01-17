@@ -99,30 +99,6 @@ public class Database {
         return oldest_key;
     }
 
-    private void increment_no_received() {
-        myRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                 obj = mutableData.getValue(Object.class);
-                if (obj == null) {
-                    return Transaction.success(mutableData);
-                }
-                int no_received = Integer.parseInt(obj.no_received);
-                no_received += 1;
-                obj.no_received = String.valueOf(no_received);
-                // Set value and report transaction success
-                mutableData.setValue(obj);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                // Transaction completed
-                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
-            }
-        });
-    }
 
 
 

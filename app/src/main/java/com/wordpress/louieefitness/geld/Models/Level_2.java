@@ -13,6 +13,18 @@ public class Level_2 {
         this.color = color;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setNo_received(String no_received) {
+        this.no_received = no_received;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public String getUsername() {
         return username;
     }
