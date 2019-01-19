@@ -11,17 +11,18 @@ import com.google.firebase.database.Transaction;
 
 public class Level_1 {
     private String username, no_received, color;
-    final public String  ref = "Level_1";
+    final public static  String  ref = "Level_1";
     private Level_1 my_level;
+    final public static String name = "1";
+    final public String  Color = "Red";
 
     public Level_1(){
 
     }
 
-    public Level_1(String username, String no_received, String color) {
+    public Level_1(String username, String no_received) {
         this.username = username;
         this.no_received = no_received;
-        this.color = color;
     }
 
     public String getUsername() {
@@ -32,10 +33,6 @@ public class Level_1 {
         return no_received;
     }
 
-    public String getColor() {
-        return color;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -44,9 +41,6 @@ public class Level_1 {
         this.no_received = no_received;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
     public void increment_no_received() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(ref);

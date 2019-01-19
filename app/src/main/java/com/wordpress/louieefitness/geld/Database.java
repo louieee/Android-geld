@@ -22,7 +22,7 @@ public class Database {
     private Context con;
     private Object obj;
     private ArrayList<Object> db_list;
-    private String oldest_key;
+    private String oldest_key, the_key;
     private String no_received;
 
     public Database(Context con, String ref) {
@@ -36,11 +36,11 @@ public class Database {
         Toast.makeText(con, "Added new " + db_Name + " successfully", Toast.LENGTH_LONG).show();
     }
 
-    public Object Retrieve_by_Id(String db_id) {
+    public Object Retrieve_by_Id(String db_id, final Object n ) {
         myRef.child(db_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                obj = dataSnapshot.getValue(Object.class);
+                obj = dataSnapshot.getValue(n.getClass());
             }
 
             @Override
@@ -97,6 +97,26 @@ public class Database {
             }
         });
         return oldest_key;
+    }
+
+    public String retrieve_object_key(String child, String Query){
+        Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    the_key = childSnapshot.getKey();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                the_key = "";
+            }
+        });
+        return the_key;
     }
 
 
