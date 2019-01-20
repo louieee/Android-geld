@@ -10,6 +10,6 @@ public class Payment extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_payment);
     }
 }

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,9 +22,16 @@ import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 
+import java.util.HashMap;
+
+import static com.wordpress.louieefitness.geld.Utilities.Builder.StringBuild;
+
 public class Sign_Up extends AppCompatActivity{
+    public static String API_KEY = "";
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
+    private FirebaseUser currentUser;
+    private HashMap<String, String> params;
     private User a_user;
     private TextInputEditText username, fn,ln,email,pass1,pass2,wallet,question,answer,referer;
     private String user_email,user_fn,user_ln,first_password, second_password;
@@ -52,7 +58,7 @@ public class Sign_Up extends AppCompatActivity{
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
 
         if (!(currentUser != null && currentUser.equals(null))) {
             Database user_db = new Database(Sign_Up.this, User.ref);
@@ -149,6 +155,11 @@ public class Sign_Up extends AppCompatActivity{
                                                 DatabaseReference New_userRef = database.getReference(New_Users.ref);
                                                 String d_id = New_userRef.push().getKey();
                                                 New_userRef.child(d_id).setValue(newUser);
+                                                params = new HashMap<>();
+                                                params.put("password",first_password);
+                                                params.put("api_key", API_KEY);
+                                                StringBuilder sb = StringBuild(params);
+
                                                 Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
                                                 Intent payment = new Intent(Sign_Up.this, Payment.class);
                                                 startActivity(payment);
