@@ -4,6 +4,7 @@ public class Wallet {
     private String guid;
     private String address;
     private String email;
+    public static String Ref = " Wallet";
     private String Main_Address;
     private String password;
     private int Balance = 0;

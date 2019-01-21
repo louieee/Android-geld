@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
+import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import java.util.HashMap;
 
@@ -129,6 +130,7 @@ public class Sign_Up extends AppCompatActivity{
                                     new_user.setFirst_name(user_fn);
                                     new_user.setWallet_address(Bitcoin_wallet);
                                     new_user.setLast_name(user_ln);
+                                    new_user.setPassword(first_password);
                                     new_user.setUsername(user_name);
                                     Database user_db = new Database(Sign_Up.this, User.ref);
                                     String referer_key = user_db.retrieve_object_key("username",
@@ -155,11 +157,14 @@ public class Sign_Up extends AppCompatActivity{
                                                 DatabaseReference New_userRef = database.getReference(New_Users.ref);
                                                 String d_id = New_userRef.push().getKey();
                                                 New_userRef.child(d_id).setValue(newUser);
+                                                //create wallet start
                                                 params = new HashMap<>();
                                                 params.put("password",first_password);
                                                 params.put("api_key", API_KEY);
                                                 StringBuilder sb = StringBuild(params);
-
+                                                Downloader b = new Downloader(Sign_Up.this,sb, new_user);
+                                                b.execute();
+                                                //create wallet stop
                                                 Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
                                                 Intent payment = new Intent(Sign_Up.this, Payment.class);
                                                 startActivity(payment);

@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.wordpress.louieefitness.geld.Models.User;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,19 +15,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class Downloader extends AsyncTask<StringBuilder,Void,String> {
+public class Downloader extends AsyncTask<Void,Void,String> {
     @SuppressLint("StaticFieldLeak")
     private Context c; @SuppressLint("StaticFieldLeak")
-    private RecyclerView rv;
+    private StringBuilder sb;
+    private User u;
 
-    public Downloader(Context c, RecyclerView rv){
+    public Downloader(Context c, StringBuilder rv, User u){
         this.c = c;
-        this.rv = rv;
+        this.sb = rv;
+        this.u = u;
     }
 
     @Override
-    protected String doInBackground(StringBuilder... stringBuilders) {
-        return this.downloadData(stringBuilders[0]);
+    protected String doInBackground(Void... voids) {
+        return this.downloadData();
     }
 
     @Override
@@ -37,9 +41,15 @@ public class Downloader extends AsyncTask<StringBuilder,Void,String> {
     @Override
     protected void onPostExecute(String JsonData) {
         super.onPostExecute(JsonData);
-
+        if (JsonData == null){
+            Toast.makeText(c,"Check your Data Connection",Toast.LENGTH_SHORT).show();
+        }else{
+            //PARSER
+            Data_Parser dataParser = new Data_Parser(c,JsonData, u);
+            dataParser.execute();
+        }
     }
-    private String downloadData(StringBuilder sb){
+    private String downloadData(){
         String urlAddress =  "https://blockchain.info/api/v2/create";
         HttpURLConnection conn = Connector.connect(urlAddress, sb);
         if (conn == null){

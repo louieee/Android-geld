@@ -2,7 +2,7 @@ package com.wordpress.louieefitness.geld.Models;
 
 public class User {
     private String username, first_name, last_name, wallet_address, email;
-    private String question, answer;
+    private String question, answer, password;
     private String recent_payout, accumulated_payout, level = "0";
     public  static final String ref = "User";
 
@@ -11,11 +11,12 @@ public class User {
     }
 
     public User(String username, String first_name, String last_name, String level, String wallet_address,
-                String email, String question, String answer, String recent_payout, String accumulated_payout) {
+                String email, String password, String question, String answer, String recent_payout, String accumulated_payout) {
         this.username = username;
         this.first_name = first_name;
         this.last_name = last_name;
         this.level = level;
+        this.password = password;
         this.wallet_address = wallet_address;
         this.email = email;
         this.question = question;
@@ -34,6 +35,14 @@ public class User {
 
     public void setLast_name(String last_name) {
         this.last_name = last_name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setLevel(String level) {
