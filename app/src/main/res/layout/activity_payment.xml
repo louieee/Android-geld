@@ -65,13 +65,15 @@
 
 
         <Button
+            android:id = "@+id/invest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Invest Now"
             android:textSize="20sp"
             android:layout_weight="0"
-            android:layout_margin="20dp"
+            android:onClick="make_investment"
+            android:layout_margin="60dp"
             android:textColor="@color/white"
-            android:background="@drawable/round"/>
+            android:background="@drawable/round_green"/>
     </LinearLayout>
 </ScrollView>

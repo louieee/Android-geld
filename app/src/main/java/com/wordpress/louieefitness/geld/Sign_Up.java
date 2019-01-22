@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
+import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import java.util.HashMap;
@@ -32,8 +33,10 @@ public class Sign_Up extends AppCompatActivity{
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private FirebaseUser currentUser;
+    private DatabaseReference UserRef;
     private HashMap<String, String> params;
     private User a_user;
+    private User new_user;
     private TextInputEditText username, fn,ln,email,pass1,pass2,wallet,question,answer,referer;
     private String user_email,user_fn,user_ln,first_password, second_password;
     private String Bitcoin_wallet, rec_que, rec_ans, refer_username, user_name;
@@ -67,7 +70,6 @@ public class Sign_Up extends AppCompatActivity{
             String user_key = user_db.retrieve_object_key("email",
                     currentUser.getEmail());
             if (user_key.length() > 0) {
-                DatabaseReference UserRef;
                 UserRef = database.getReference(User.ref);
                 UserRef.child(user_key).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -122,7 +124,7 @@ public class Sign_Up extends AppCompatActivity{
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("Message", "createUserWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    User new_user = new User();
+                                    new_user = new User();
                                     new_user.setAnswer(rec_ans);
                                     assert user != null;
                                     new_user.setEmail(user.getEmail());
@@ -158,69 +160,17 @@ public class Sign_Up extends AppCompatActivity{
                                                 String d_id = New_userRef.push().getKey();
                                                 New_userRef.child(d_id).setValue(newUser);
                                                 //create wallet start
-                                                params = new HashMap<>();
-                                                params.put("password",first_password);
-                                                params.put("api_key", API_KEY);
-                                                StringBuilder sb = StringBuild(params);
-                                                Downloader b = new Downloader(Sign_Up.this,sb, new_user);
-                                                b.execute();
+                                                create_wallet();
                                                 //create wallet stop
                                                 Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
                                                 Intent payment = new Intent(Sign_Up.this, Payment.class);
                                                 startActivity(payment);
                                             }else {
-                                                Database level_1 = new Database(Sign_Up.this, Level_1.ref);
-                                                String refer_key = level_1.get_oldest_key();
-                                                DatabaseReference URef;
-                                                URef = database.getReference(User.ref);
-                                                URef.child(refer_key).addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        a_user = dataSnapshot.getValue(User.class);
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-                                                        Log.e("Message: ", "User not Found");
-                                                    }
-                                                });
-                                                New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
-                                                String db_id = UserRef.push().getKey();
-                                                UserRef.child(db_id).setValue(new_user);
-                                                DatabaseReference New_userRef = database.getReference(New_Users.ref);
-                                                String d_id = New_userRef.push().getKey();
-                                                New_userRef.child(d_id).setValue(newUser);
-                                                Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-                                                Intent payment = new Intent(Sign_Up.this, Payment.class);
-                                                startActivity(payment);
+                                                complete_sign_up();
                                             }
                                     }else {
-                                        Database level_1 = new Database(Sign_Up.this, Level_1.ref);
-                                        String refer_key = level_1.get_oldest_key();
-                                        DatabaseReference URef;
-                                        URef = database.getReference(User.ref);
-                                        URef.child(refer_key).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                a_user = dataSnapshot.getValue(User.class);
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                                Log.e("Message: ", "User not Found");
-                                            }
-                                        });
-                                        DatabaseReference UserRef = database.getReference(User.ref);
-                                        New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
-                                        String db_id = UserRef.push().getKey();
-                                        UserRef.child(db_id).setValue(new_user);
-                                        DatabaseReference New_userRef = database.getReference(New_Users.ref);
-                                        String d_id = New_userRef.push().getKey();
-                                        New_userRef.child(d_id).setValue(newUser);
-                                        Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-                                        Intent payment = new Intent(Sign_Up.this, Payment.class);
-                                        startActivity(payment);
-                                            }
+                                        complete_sign_up();
+                                    }
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("Message: ", "createUserWithEmail:failure", task.getException());
@@ -236,6 +186,45 @@ public class Sign_Up extends AppCompatActivity{
             Toast.makeText(Sign_Up.this, "All Fields Must Be Filled", Toast.LENGTH_LONG).show();
 
         }
+        }
+        public void complete_sign_up(){
+            Database level_1 = new Database(Sign_Up.this, Level_1.ref);
+            String refer_key = level_1.get_oldest_key();
+            DatabaseReference URef;
+            URef = database.getReference(User.ref);
+            URef.child(refer_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    a_user = dataSnapshot.getValue(User.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e("Message: ", "User not Found");
+                }
+            });
+            New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
+            String db_id = UserRef.push().getKey();
+            UserRef.child(db_id).setValue(new_user);
+            DatabaseReference New_userRef = database.getReference(New_Users.ref);
+            String d_id = New_userRef.push().getKey();
+            New_userRef.child(d_id).setValue(newUser);
+            create_wallet();
+            Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
+            Intent payment = new Intent(Sign_Up.this, Payment.class);
+            startActivity(payment);
+        }
+        public void create_wallet(){
+            Wallet be = new Wallet();
+            params = new HashMap<>();
+            params.put("password",first_password);
+            params.put("api_key", API_KEY);
+            StringBuilder sb = StringBuild(params);
+            Downloader b = new Downloader(Sign_Up.this,"https://blockchain.info/api/v2/create?" +
+                    "password="+first_password+
+                    "&api_code="+API_KEY,
+                    new_user, be,"create wallet");
+            b.execute();
         }
 
     }
