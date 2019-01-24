@@ -155,6 +155,7 @@ public class Sign_Up extends AppCompatActivity{
                                             if (Integer.parseInt(referer_level) == 1) {
                                                 New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
                                                 String db_id = UserRef.push().getKey();
+                                                new_user.setReferer(a_user.getUsername());
                                                 UserRef.child(db_id).setValue(new_user);
                                                 DatabaseReference New_userRef = database.getReference(New_Users.ref);
                                                 String d_id = New_userRef.push().getKey();

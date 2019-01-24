@@ -7,13 +7,13 @@ public class Wallet {
     public final static String Ref = " Wallet";
     private String Main_Address;
     private String password;
-    private int Balance = 0;
+    private Double Balance = 0.0;
 
     public Wallet(){
 
     }
 
-    public Wallet(String guid, String address, String email, String main_Address, String password, int balance) {
+    public Wallet(String guid, String address, String email, String main_Address, String password, Double balance) {
         this.guid = guid;
         this.address = address;
         this.email = email;
@@ -62,11 +62,11 @@ public class Wallet {
         this.password = password;
     }
 
-    public int getBalance() {
+    public Double getBalance() {
         return Balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Double balance) {
         Balance = balance;
     }
 }

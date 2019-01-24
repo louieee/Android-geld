@@ -9,6 +9,8 @@ import android.widget.Toast;
 import com.wordpress.louieefitness.geld.Account;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.Payment;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,10 +39,16 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
     @Override
     protected Wallet doInBackground(Void... voids) {
         Wallet res = new Wallet();
-        if (action.equals("create wallet")) {
-            res = this.parseData();
-        }else if (action.equals("send bitcoin")){
-            res = this.get_userWallet();
+        switch (action) {
+            case "create wallet":
+                res = this.parseData();
+                break;
+            case "send bitcoin":
+                res = this.get_userWallet();
+                break;
+            case "get balance":
+                res = (this.my_wallet_bal());
+                break;
         }
         return res;
     }
@@ -62,6 +70,9 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
                 }else{
                     Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();
                 }
+            }else if (action.equals("get balance")){
+                Toast.makeText(c, "Your balance is "+result.getBalance().toString()+" BTC",
+                        Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -94,6 +105,19 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
             String guid = decode(j.getString("message"), "UTF-8");
             my_wallet.setGuid(guid);
             return c;
+
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private Wallet my_wallet_bal(){
+        try{
+            JSONObject j = new JSONObject(JsonData);
+            String balance = decode(j.getString("balance"), "UTF-8");
+            Double bal = Double.parseDouble(balance) / 100000000;
+            m_wallet.setBalance(bal);
+            return m_wallet;
 
         } catch (JSONException | IOException e) {
             e.printStackTrace();

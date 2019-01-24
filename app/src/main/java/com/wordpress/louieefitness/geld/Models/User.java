@@ -2,27 +2,25 @@ package com.wordpress.louieefitness.geld.Models;
 
 public class User {
     private String username, first_name, last_name, wallet_address, email;
-    private String question, answer, password;
+    private String question, answer, password, referer;
     private String recent_payout, accumulated_payout, level = "0";
     public  static final String ref = "User";
 
     public User(){
-
     }
 
-    public User(String username, String first_name, String last_name, String level, String wallet_address,
-                String email, String password, String question, String answer, String recent_payout, String accumulated_payout) {
+    public User(String username, String email, String password) {
         this.username = username;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.level = level;
-        this.password = password;
-        this.wallet_address = wallet_address;
         this.email = email;
-        this.question = question;
-        this.answer = answer;
-        this.recent_payout = recent_payout;
-        this.accumulated_payout = accumulated_payout;
+        this.password = password;
+    }
+
+    public String getReferer() {
+        return referer;
+    }
+
+    public void setReferer(String referer) {
+        this.referer = referer;
     }
 
     public void setUsername(String username) {

@@ -3,6 +3,7 @@ package com.wordpress.louieefitness.geld;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +22,7 @@ public class Payment extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser current_user;
     private String the_key;
-    private String geld_wallet_address ="";
+    public static String geld_wallet_address ="";
     private Wallet my_wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +33,14 @@ public class Payment extends AppCompatActivity {
         current_user = mAuth.getCurrentUser();
         assert current_user != null;
         Wallet wallet = Retrieve_by_Id(retrieve_object_key(Wallet.Ref,"email",current_user.getEmail()));
+        set_wallet_balance(wallet);
         String wallet_details = "Wallet Address: "+wallet.getAddress()+"/n"+
                 "Wallet Email: "+wallet.getEmail()+"/n"+
                 "Wallet Main Address: "+wallet.getMain_Address()+"/n"+
-                "Wallet Password: "+wallet.getPassword()+"/n";
+                "Wallet Password: "+wallet.getPassword()+"/n"+
+                "Wallet Balance: "+wallet.getBalance().toString()+" BTC";
+        TextView wallet_info = findViewById(R.id.wallet_info);
+        wallet_info.setText(wallet_details);
     }
 
     public String retrieve_object_key(String ref,String child, String Query){
@@ -77,17 +82,18 @@ public class Payment extends AppCompatActivity {
 
         return my_wallet;
     }
-    public void get_wallet_balance(Wallet wallet){
-        wallet.setBalance(0);
+    public void set_wallet_balance(Wallet wallet){
+        Downloader get_bal = new Downloader(Payment.this,"https://blockchain.info/merchant/"
+                +wallet.getGuid()+"/balance?password="+wallet.getPassword(),null,wallet,"get balance");
+        get_bal.execute();
     }
     public void make_investment(View v){
         Wallet be = new Wallet();
         String key = retrieve_object_key(User.ref,"email",current_user.getEmail());
-        User u = new User();
         Downloader invest = new Downloader(Payment.this, "https://blockchain.info/merchant/"+
                 my_wallet.getGuid()+"/payment?password="+
                 my_wallet.getPassword()+"&to="+geld_wallet_address+
-                "&amount="+"0.000000000025",u,be,"send bitcoin");
+                "&amount="+"250000",null,be,"send bitcoin");
         invest.execute();
 
     }
