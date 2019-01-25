@@ -46,8 +46,7 @@
             android:textSize="24sp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:padding="5dp"
-            android:textColor="@color/black">
+            android:padding="5dp">
         </TextView>
 
         <TextView
