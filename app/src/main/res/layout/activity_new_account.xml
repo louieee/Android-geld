@@ -59,6 +59,7 @@
 
             </TextView>
             <TextView
+                android:id="@+id/New_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
@@ -66,8 +67,6 @@
                 android:text="Username"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
-
-
                 >
 
             </TextView>
@@ -91,6 +90,7 @@
 
             </TextView>
             <TextView
+                android:id="@+id/New_user_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"

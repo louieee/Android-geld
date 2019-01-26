@@ -10,12 +10,11 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 public class Level_1 {
-    private String username, no_received, color;
+    private String username, no_received;
     final public static  String  ref = "Level_1";
     private Level_1 my_level;
     final public static String name = "1";
     final public String  Color = "Red";
-
     public Level_1(){
 
     }

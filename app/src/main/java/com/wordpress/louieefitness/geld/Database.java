@@ -30,9 +30,10 @@ public class Database {
         this.con = con;
     }
 
-    public void Add_New(Object obj, String db_Name) {
-        String db_id = myRef.push().getKey();
-        myRef.child(db_id).setValue(obj);
+    public void Add_New(String ref,Object obj, String db_Name) {
+        DatabaseReference d_ref = database.getReference(ref);
+        String db_id = d_ref.push().getKey();
+        d_ref.child(db_id).setValue(obj);
         Toast.makeText(con, "Added new " + db_Name + " successfully", Toast.LENGTH_LONG).show();
     }
 

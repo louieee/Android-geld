@@ -35,9 +35,6 @@ public class Payment extends AppCompatActivity {
         Wallet wallet = Retrieve_by_Id(retrieve_object_key(Wallet.Ref,"email",current_user.getEmail()));
         set_wallet_balance(wallet);
         String wallet_details = "Wallet Address: "+wallet.getAddress()+"/n"+
-                "Wallet Email: "+wallet.getEmail()+"/n"+
-                "Wallet Main Address: "+wallet.getMain_Address()+"/n"+
-                "Wallet Password: "+wallet.getPassword()+"/n"+
                 "Wallet Balance: "+wallet.getBalance().toString()+" BTC";
         TextView wallet_info = findViewById(R.id.wallet_info);
         wallet_info.setText(wallet_details);
@@ -59,7 +56,7 @@ public class Payment extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(Payment.this, " Database error occured when retrieving data",
+                Toast.makeText(Payment.this, " Database error occurred when retrieving data",
                         Toast.LENGTH_LONG).show();
             }
         });
