@@ -41,7 +41,7 @@ public class New_Account extends AppCompatActivity {
         Downloader verify = new Downloader(this,"https://blockchain.info/q/getsentbyaddress/"
                 +w.getAddress()+"?confirmations=6",u,w,"verify payment");
         verify.execute();
-        String the_id = retrieve_object_key(New_Users.Ref,"username",u.getUsername());
+        String the_id = retrieve_object_key(New_Users.ref,"username",u.getUsername());
         New_Users newUsers = Retrieve_new_user(the_id);
         username.setText(newUsers.getUsername());
         email.setText(current_user.getEmail());
@@ -87,7 +87,7 @@ public class New_Account extends AppCompatActivity {
     }
     public New_Users Retrieve_new_user(String db_id) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(New_Users.Ref);
+        DatabaseReference myRef = db.getReference(New_Users.ref);
         myRef.child(db_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

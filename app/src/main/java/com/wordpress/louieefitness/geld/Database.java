@@ -99,6 +99,28 @@ public class Database {
         });
         return oldest_key;
     }
+    public String get_oldest_child(){
+        //TODO set level.reached limit
+        //TODO use as query variable
+
+        Query oldest;
+        oldest = myRef.orderByChild("no_received").equalTo("0").limitToFirst(1);
+        oldest.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    oldest_key = childSnapshot.getKey();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Message: ", "onCancelled", databaseError.toException());
+            }
+        });
+        return oldest_key;
+    }
+
 
     public String retrieve_object_key(String child, String Query){
         Query m_query = myRef.orderByChild(child).equalTo(Query);

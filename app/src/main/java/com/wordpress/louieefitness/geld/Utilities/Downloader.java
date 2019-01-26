@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.logging.Level;
 
 public class Downloader extends AsyncTask<Void,Void,String> {
     @SuppressLint("StaticFieldLeak")
@@ -38,6 +39,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private String action;
     private Wallet wallet;
+    private Level_1 ml;
     private String the_key;
 
     public Downloader(Context c, String url, User u, Wallet wallet, String action){
@@ -77,9 +79,22 @@ public class Downloader extends AsyncTask<Void,Void,String> {
                     //delete user from new users
                     String my_key = retrieve_object_key(New_Users.ref,"username",u.getUsername());
                     Delete_New_User(New_Users.ref,my_key);
-                    //Increment user's referer's no received
-                    Update_no_received(u.getReferer());
-                    //go to account activity
+                    //Check if referer no < 2 && if referer is in level1
+                    String ref_key = retrieve_object_key(Level_1.ref, "username",u.getReferer());
+                    if (ref_key.isEmpty() || ref_key == null){
+                        // get new referer whose no < 2
+                        ////increment referer no
+                        // update user's refer
+                    }else{
+                        Level_1 r = Retrieve_Referer(ref_key);
+                        if (Integer.parseInt(r.getNo_received())< 2){
+                            Update_no_received(u.getReferer());
+                        }else{
+                            // get new referer whose no < 2
+                            ////increment referer no
+                            // update user's refer
+                        }
+                    }
                     Intent account = new Intent(c.getApplicationContext(), Account.class);
                     c.startActivity(account);
                 }else{
@@ -138,6 +153,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(c, " Database error occurred when retrieving data",
                         Toast.LENGTH_LONG).show();
+
             }
         });
         return the_key;
@@ -156,7 +172,7 @@ public class Downloader extends AsyncTask<Void,Void,String> {
                     return Transaction.success(mutableData);
                 }
 
-                if (p.getUsername().equals(Username)) {
+                if (p.getUsername().equals(Username) ) {
                     int num = Integer.parseInt(p.getNo_received());
                     num = num + 1;
                     p.setNo_received(String.valueOf(num));
@@ -170,5 +186,22 @@ public class Downloader extends AsyncTask<Void,Void,String> {
                 Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
             }
         });
+    }
+    public Level_1 Retrieve_Referer(String db_id) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(Level_1.ref);
+        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ml = dataSnapshot.getValue(Level_1.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(c, "Item was not found in database", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        return ml;
     }
 }
