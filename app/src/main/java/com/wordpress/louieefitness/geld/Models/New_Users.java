@@ -3,6 +3,7 @@ package com.wordpress.louieefitness.geld.Models;
 public class New_Users {
     private String Username, referer;
     public static final String ref = "New_Users";
+    public static final String name = "Newbie";
 
     public New_Users(){
 

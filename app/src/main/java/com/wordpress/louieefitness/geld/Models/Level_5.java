@@ -10,30 +10,20 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 public class Level_5 {
-    private String username, no_received, color;
+    private String username;
+    private String no_received = String.valueOf(0);
     final public String ref = "Level_5";
-    private Level_5 my_level;
+    final public static String name = "Master";
+    private Boolean Reached_limit = getLimit();
+    final public static String color = "#ff6f00";
 
     public Level_5(){
 
     }
 
-    public Level_5(String username, String no_received, String color) {
+    public Level_5(String username, String no_received) {
         this.username = username;
         this.no_received = no_received;
-        this.color = color;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getNo_received() {
-        return no_received;
-    }
-
-    public String getColor() {
-        return color;
     }
 
     public void setUsername(String username) {
@@ -44,34 +34,30 @@ public class Level_5 {
         this.no_received = no_received;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-    public void increment_no_received() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(ref);
-        myRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                my_level = mutableData.getValue(Level_5.class);
-                if (my_level == null) {
-                    return Transaction.success(mutableData);
-                }
-                int no_received = Integer.parseInt(my_level.getNo_received());
-                no_received += 1;
-                my_level.setNo_received(String.valueOf(no_received));
-                // Set value and report transaction success
-                mutableData.setValue(my_level);
-                return Transaction.success(mutableData);
-            }
 
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                // Transaction completed
-                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
-            }
-        });
+    public String getUsername() {
+        return username;
     }
 
+    public String getNo_received() {
+        return no_received;
+    }
+
+    private Boolean getLimit(){
+        Boolean result = false;
+        if (Integer.parseInt(no_received)< 32){
+            result = false;
+        }else if (Integer.parseInt(no_received) == 32){
+            result = true;
+        }
+        return result;
+    }
+
+    public Boolean getReached_limit() {
+        return Reached_limit;
+    }
+
+    public void setReached_limit(Boolean reached_limit) {
+        Reached_limit = reached_limit;
+    }
 }

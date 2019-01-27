@@ -151,8 +151,7 @@ public class Sign_Up extends AppCompatActivity{
                                                 Log.e("Message: ", "User not Found");
                                             }
                                         });
-                                            String referer_level = a_user.getLevel();
-                                            if (Integer.parseInt(referer_level) == 1) {
+                                            if (a_user.getLevel().equals(Level_1.name)) {
                                                 New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
                                                 String db_id = UserRef.push().getKey();
                                                 new_user.setReferer(a_user.getUsername());

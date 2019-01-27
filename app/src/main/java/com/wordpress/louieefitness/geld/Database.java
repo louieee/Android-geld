@@ -100,11 +100,7 @@ public class Database {
         return oldest_key;
     }
     public String get_oldest_child(){
-        //TODO set level.reached limit
-        //TODO use as query variable
-
-        Query oldest;
-        oldest = myRef.orderByChild("no_received").equalTo("0").limitToFirst(1);
+        Query oldest = myRef.orderByChild("reached_limit").equalTo(false).limitToFirst(1);
         oldest.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
