@@ -3,7 +3,7 @@ package com.wordpress.louieefitness.geld.Models;
 public class User {
     private String username, first_name, last_name, wallet_address, email;
     private String question, answer, password, referer;
-    private String recent_payout, accumulated_payout = String.valueOf(0);
+    private String accumulated_payout = String.valueOf(0);
     private String level = New_Users.name;
     public  static final String ref = "User";
 
@@ -70,14 +70,6 @@ public class User {
 
     public void setAnswer(String answer) {
         this.answer = answer;
-    }
-
-    public String getRecent_payout() {
-        return recent_payout;
-    }
-
-    public void setRecent_payout(String recent_payout) {
-        this.recent_payout = recent_payout;
     }
 
     public String getAccumulated_payout() {

@@ -104,7 +104,7 @@ public class New_Account extends AppCompatActivity {
     }
     public User Retrieve_user_by_Id(String db_id) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(Wallet.Ref);
+        DatabaseReference myRef = db.getReference(User.ref);
         myRef.child(db_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

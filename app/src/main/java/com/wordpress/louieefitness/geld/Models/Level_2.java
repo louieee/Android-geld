@@ -8,11 +8,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 public class Level_2 {
     private String username;
+    private static Level_2 level2_user;
     private String no_received = String.valueOf(0);
-    final public String ref = "Level_2";
+    final public static String ref = "Level_2";
     final public static String name = "Amateur";
     private Boolean Reached_limit = getLimit();
     final public static String color = "#7103f7";
@@ -59,5 +61,22 @@ public class Level_2 {
 
     public void setReached_limit(Boolean reached_limit) {
         Reached_limit = reached_limit;
+    }
+    public static Level_2 Retrieve_1_by_Id(String db_id) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(Level_2.ref);
+        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                level2_user = dataSnapshot.getValue(Level_2.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                level2_user = null;
+            }
+        });
+
+        return level2_user;
     }
 }
