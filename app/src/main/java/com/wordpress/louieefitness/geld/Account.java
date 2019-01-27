@@ -199,6 +199,12 @@ public class Account extends AppCompatActivity {
 
         return the_user;
     }
+    public void cash_out(View v){
+
+    }
+    public void Upgrade(View v){
+
+    }
 
 
 
