@@ -11,6 +11,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Account;
+import com.wordpress.louieefitness.geld.New_Account;
 
 public class Level_1 {
     private String username;
@@ -80,5 +81,44 @@ public class Level_1 {
 
         return level1_user;
     }
+    public static void Add(Level_1 level1_user){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(ref);
+        String key = myRef.push().getKey();
+        myRef.child(key).setValue(level1_user);
+
+    }
+    public static void Update_no_received(final String username) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference the_ref = database.getReference(ref);
+        the_ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Level_1 p = mutableData.getValue(Level_1.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                if (p.getUsername().equals(username) ) {
+                    int num = Integer.parseInt(p.getNo_received());
+                    num = num + 1;
+                    p.setNo_received(String.valueOf(num));
+                    if (num == 2){
+                        p.setReached_limit(true);
+                    }
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+            }
+        });
+    }
+
+
+
 
 }

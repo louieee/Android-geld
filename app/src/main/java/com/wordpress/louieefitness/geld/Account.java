@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,7 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.Level_2;
@@ -38,14 +41,16 @@ public class Account extends AppCompatActivity {
     private ProgressBar progress;
     private ImageView icon;
     private Button cash, upgrade;
-    private String the_key;
-    private User the_user;
+    private String the_key,oldest_key;
+    private User the_user, my_user;
     private int value;
+    private FirebaseDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         current_user = mAuth.getCurrentUser();
         cash = findViewById(R.id.cash_out);
         upgrade = findViewById(R.id.upgrade);
@@ -59,7 +64,7 @@ public class Account extends AppCompatActivity {
         //display user details
             //get current user
             //get user through email
-        User my_user = Retrieve_user_by_Id(retrieve_object_key(User.ref,"email",current_user.getEmail()));
+        my_user = Retrieve_user_by_Id(retrieve_object_key(User.ref,"email",current_user.getEmail()));
         u_n.setText(my_user.getUsername());
         e_m.setText(my_user.getEmail());
         l_v.setText(my_user.getLevel());
@@ -150,19 +155,11 @@ public class Account extends AppCompatActivity {
             cash.setVisibility(GONE);
         }
 
-        //write code for upgrade
-            //if limit is true
-                //delete user from current level
-                //add user to new level
-                //increment the no_received of oldest user in next level whose limit is false
-                //update user's level in model
-        //write code for cashout
-            //pay required bitcoin to user address
-            //decrement accumulated payment for user with the payout
 
     }
     public String retrieve_object_key(String ref,String child, String Query){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
+
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -199,12 +196,95 @@ public class Account extends AppCompatActivity {
 
         return the_user;
     }
+    //write code for cashout
+    //pay required bitcoin to user address
+    //decrement accumulated payment for user with the payout
+
     public void cash_out(View v){
 
     }
     public void Upgrade(View v){
+        switch (my_user.getLevel()){
+            case Level_1.name:
+                Delete(retrieve_object_key(Level_1.ref,"username",my_user.getUsername()),Level_1.ref);
+                Level_2 n_l = new Level_2(my_user.getUsername());
+                Level_2.Add(n_l);
+                Level_2 r_1 = Level_2.Retrieve_1_by_Id(get_oldest_child_key(Level_2.ref));
+                Level_2.Update_no_received(r_1.getUsername());
+                my_user.setLevel(Level_2.name);
+                Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
+                break;
+            case Level_2.name:
+                Delete(retrieve_object_key(Level_2.ref,"username",my_user.getUsername()),Level_2.ref);
+                Level_3 n_2 = new Level_3(my_user.getUsername());
+                Level_3.Add(n_2);
+                Level_3 r_2 = Level_3.Retrieve_1_by_Id(get_oldest_child_key(Level_3.ref));
+                Level_3.Update_no_received(r_2.getUsername());
+                my_user.setLevel(Level_3.name);
+                Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
+                break;
+            case Level_3.name:
+                Delete(retrieve_object_key(Level_3.ref,"username",my_user.getUsername()),Level_3.ref);
+                Level_4 n_3 = new Level_4(my_user.getUsername());
+                Level_4.Add(n_3);
+                Level_4 r_3 = Level_4.Retrieve_1_by_Id(get_oldest_child_key(Level_4.ref));
+                Level_4.Update_no_received(r_3.getUsername());
+                my_user.setLevel(Level_4.name);
+                Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
+                break;
+            case Level_4.name:
+                Delete(retrieve_object_key(Level_4.ref,"username",my_user.getUsername()),Level_4.ref);
+                Level_5 n_4 = new Level_5(my_user.getUsername());
+                Level_5.Add(n_4);
+                Level_5 r_4 = Level_5.Retrieve_1_by_Id(get_oldest_child_key(Level_5.ref));
+                Level_5.Update_no_received(r_4.getUsername());
+                my_user.setLevel(Level_5.name);
+                Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
+                break;
+            case Level_5.name:
+                Delete(retrieve_object_key(Level_5.ref,"username",my_user.getUsername()),Level_5.ref);
+                Level_6 n_5 = new Level_6(my_user.getUsername());
+                Level_6.Add(n_5);
+                Level_6 r_5 = Level_6.Retrieve_1_by_Id(get_oldest_child_key(Level_6.ref));
+                Level_6.Update_no_received(r_5.getUsername());
+                my_user.setLevel(Level_6.name);
+                Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
+                break;
+            case Level_6.name:
+                Delete(retrieve_object_key(Level_6.ref,"username",my_user.getUsername()),Level_6.ref);
+                //Implement Finished level
+                break;
+        }
 
     }
+    public void Delete(String db_id, String ref) {
+        DatabaseReference myRef = database.getReference(ref);
+        myRef.child(db_id).removeValue();
+    }
+    public String get_oldest_child_key(String ref){
+        DatabaseReference myRef = database.getReference(ref);
+        Query oldest = myRef.orderByChild("reached_limit").equalTo(false).limitToFirst(1);
+        oldest.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    oldest_key = childSnapshot.getKey();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Message: ", "onCancelled", databaseError.toException());
+            }
+        });
+        return oldest_key;
+    }
+    public void Update_user(String db_id, User user) {
+        DatabaseReference myRef = database.getReference(User.ref);
+        myRef.child(db_id).setValue(user);
+    }
+
+
 
 
 

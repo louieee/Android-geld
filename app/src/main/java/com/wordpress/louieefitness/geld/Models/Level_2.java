@@ -23,9 +23,8 @@ public class Level_2 {
 
     }
 
-    public Level_2(String username, String no_received) {
+    public Level_2(String username) {
         this.username = username;
-        this.no_received = no_received;
     }
 
     public void setUsername(String username) {
@@ -79,4 +78,42 @@ public class Level_2 {
 
         return level2_user;
     }
+    public static void Add(Level_2 level2_user){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(ref);
+        String key = myRef.push().getKey();
+        myRef.child(key).setValue(level2_user);
+
+    }
+    public static void Update_no_received(final String username) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference the_ref = database.getReference(ref);
+        the_ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Level_2 p = mutableData.getValue(Level_2.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                if (p.getUsername().equals(username) ) {
+                    int num = Integer.parseInt(p.getNo_received());
+                    num = num + 1;
+                    p.setNo_received(String.valueOf(num));
+                    if (num == 4){
+                        p.setReached_limit(true);
+                    }
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+            }
+        });
+    }
+
+
 }

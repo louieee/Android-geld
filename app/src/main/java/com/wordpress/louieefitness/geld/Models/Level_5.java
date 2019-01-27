@@ -23,9 +23,8 @@ public class Level_5 {
 
     }
 
-    public Level_5(String username, String no_received) {
+    public Level_5(String username) {
         this.username = username;
-        this.no_received = no_received;
     }
 
     public void setUsername(String username) {
@@ -79,4 +78,50 @@ public class Level_5 {
 
         return level5_user;
     }
+    public static void Add(String ref, Level_5 level5_user){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(ref);
+        String key = myRef.push().getKey();
+        myRef.child(key).setValue(level5_user);
+
+    }
+    public static void Add(Level_5 level5_user){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(ref);
+        String key = myRef.push().getKey();
+        myRef.child(key).setValue(level5_user);
+
+    }
+    public static void Update_no_received(final String username) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference the_ref = database.getReference(ref);
+        the_ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Level_5 p = mutableData.getValue(Level_5.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                if (p.getUsername().equals(username) ) {
+                    int num = Integer.parseInt(p.getNo_received());
+                    num = num + 1;
+                    p.setNo_received(String.valueOf(num));
+                    if (num == 32){
+                        p.setReached_limit(true);
+                    }
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+            }
+        });
+    }
+
+
+
 }
