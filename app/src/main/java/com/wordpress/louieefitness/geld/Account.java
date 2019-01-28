@@ -172,9 +172,13 @@ public class Account extends AppCompatActivity {
         }
         Double your_cash = Double.parseDouble(my_user.getBalance());
         withdraw = your_cash - Bal_residue-upgrade_money;
-        t_p.setText(String.valueOf(withdraw));
+        if (withdraw < 0.0){
+            t_p.setText(String.valueOf(0));
+        }else {
+            t_p.setText(String.valueOf(withdraw));
+        }
         my_money = String.valueOf(withdraw * 100000000);
-        if (withdraw > minimum){
+        if (withdraw >= minimum){
             withdraw_ready = true;
             cash.setVisibility(VISIBLE);
         }else{
@@ -226,7 +230,7 @@ public class Account extends AppCompatActivity {
 
     public void cash_out(View v){
         my_money = String.valueOf(withdraw * 100000000);
-        if (withdraw > minimum && withdraw_ready){
+        if (withdraw >= minimum && withdraw_ready){
             Wallet user_wallet = Retrieve_wallet_by_Id(retrieve_object_key(Wallet.Ref,"email",my_user.getEmail()));
             Make_Pay pay = new Make_Pay(Account.this, "https://blockchain.info/merchant/"+
                     Sign_Up.GUID+"/payment?password="+
