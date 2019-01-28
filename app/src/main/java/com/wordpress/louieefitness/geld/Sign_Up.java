@@ -30,6 +30,9 @@ import static com.wordpress.louieefitness.geld.Utilities.Builder.StringBuild;
 
 public class Sign_Up extends AppCompatActivity{
     public static String API_KEY = "";
+    public static String GUID = "";
+    public static String ADDRESS = "";
+    public static String PASSWORD = "";
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private FirebaseUser currentUser;

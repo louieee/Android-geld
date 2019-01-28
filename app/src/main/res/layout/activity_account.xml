@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:padding="10dp"
-                android:text="Total Payout: "
+                android:text="Balance: "
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
                 android:layout_weight="0"
@@ -178,7 +178,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:padding="10dp"
-                android:text="Total Payout"
+                android:text="Payout"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
                 

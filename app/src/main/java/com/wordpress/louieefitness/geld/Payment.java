@@ -22,7 +22,6 @@ public class Payment extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser current_user;
     private String the_key;
-    public static String geld_wallet_address ="";
     private Wallet my_wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +88,7 @@ public class Payment extends AppCompatActivity {
         String key = retrieve_object_key(User.ref,"email",current_user.getEmail());
         Downloader invest = new Downloader(Payment.this, "https://blockchain.info/merchant/"+
                 my_wallet.getGuid()+"/payment?password="+
-                my_wallet.getPassword()+"&to="+geld_wallet_address+
+                my_wallet.getPassword()+"&to="+Sign_Up.ADDRESS+
                 "&amount="+"250000",null,be,"send bitcoin");
         invest.execute();
 

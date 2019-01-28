@@ -11,5 +11,10 @@ public class Sign_In extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.actitvity_sign_in);
+        //TODO create sign in activity
+        //through sign in
+        //check user level
+        //if user level is finished reset user to new
+        // take user to investment page
     }
 }

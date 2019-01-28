@@ -1,9 +1,18 @@
 package com.wordpress.louieefitness.geld.Models;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+
 public class User {
     private String username, first_name, last_name, wallet_address, email;
     private String question, answer, password, referer;
-    private String accumulated_payout = String.valueOf(0);
+    private String Balance = String.valueOf(0);
     private String level = New_Users.name;
     public  static final String ref = "User";
 
@@ -72,12 +81,12 @@ public class User {
         this.answer = answer;
     }
 
-    public String getAccumulated_payout() {
-        return accumulated_payout;
+    public String getBalance() {
+        return Balance;
     }
 
-    public void setAccumulated_payout(String accumulated_payout) {
-        this.accumulated_payout = accumulated_payout;
+    public void setBalance(String balance) {
+        this.Balance = balance;
     }
 
     public String getUsername() {
@@ -102,5 +111,31 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+    public static void Increment_Balance(final String username, final Double amount) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference the_ref = database.getReference(ref);
+        the_ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                User p = mutableData.getValue(User.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                if (p.getUsername().equals(username) ) {
+                    Double num = Double.parseDouble(p.getBalance());
+                    num = num + amount;
+                    p.setBalance(String.valueOf(num));
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+            }
+        });
     }
 }
