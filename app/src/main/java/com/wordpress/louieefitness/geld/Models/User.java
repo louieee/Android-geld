@@ -1,6 +1,7 @@
 package com.wordpress.louieefitness.geld.Models;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -8,10 +9,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+import com.wordpress.louieefitness.geld.Account;
 
 public class User {
-    private String username, first_name, last_name, wallet_address, email;
+    private String username, first_name, last_name,  email;
     private String question, answer, password, referer;
+    private static User the_user;
     private String Balance = String.valueOf(0);
     private String level = New_Users.name;
     public  static final String ref = "User";
@@ -57,9 +61,6 @@ public class User {
         this.level = level;
     }
 
-    public void setWallet_address(String wallet_address) {
-        this.wallet_address = wallet_address;
-    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -105,10 +106,6 @@ public class User {
         return level;
     }
 
-    public String getWallet_address() {
-        return wallet_address;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -138,4 +135,48 @@ public class User {
             }
         });
     }
+    public static void Update_user(String db_id, User user) {
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(User.ref);
+        myRef.child(db_id).setValue(user);
+    }
+    public static User Retrieve_user_by_Id(String db_id) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(User.ref);
+        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                the_user = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                the_user = null;
+            }
+        });
+
+        return the_user;
+    }
+    public static User retrieve_user(String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+        DatabaseReference myRef = db.getReference(ref);
+        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    the_user = childSnapshot.getValue(User.class);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                the_user = null;
+            }
+        });
+        return the_user;
+    }
+
+
 }

@@ -53,10 +53,10 @@ public class Make_Pay extends AsyncTask<Void,Void,String> {
         if (JsonData == null){
             Toast.makeText(c,"Check your Data Connection",Toast.LENGTH_SHORT).show();
         }else {
-                Parser dataParser = new Parser(c, JsonData,amount, u);
-                dataParser.execute();
+            Parser dataParser = new Parser(c, JsonData,amount, u);
+            dataParser.execute();
 
-            }
+        }
 
     }
     private String downloadData(){

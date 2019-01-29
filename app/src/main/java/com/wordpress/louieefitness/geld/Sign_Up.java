@@ -25,7 +25,9 @@ import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import java.util.HashMap;
+import java.util.Objects;
 
+import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 import static com.wordpress.louieefitness.geld.Utilities.Builder.StringBuild;
 
 public class Sign_Up extends AppCompatActivity{
@@ -35,129 +37,67 @@ public class Sign_Up extends AppCompatActivity{
     public static String PASSWORD = "";
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
-    private FirebaseUser currentUser;
-    private DatabaseReference UserRef;
-    private HashMap<String, String> params;
-    private User a_user;
     private User new_user;
-    private TextInputEditText username, fn,ln,email,pass1,pass2,wallet,question,answer,referer;
+    private DatabaseReference UserRef;
     private String user_email,user_fn,user_ln,first_password, second_password;
-    private String Bitcoin_wallet, rec_que, rec_ans, refer_username, user_name;
+    private String rec_que, rec_ans, refer_username, user_name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+        UserRef = database.getReference(User.ref);
         super.onCreate(savedInstanceState);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        username = findViewById(R.id.username);
-        fn = findViewById(R.id.first_name);
-        ln = findViewById(R.id.last_name);
-        email = findViewById(R.id.email);
-        pass1 = findViewById(R.id.password);
-        pass2 = findViewById(R.id.confirm_password);
-        wallet = findViewById(R.id.bitcoin_wallet);
-        question = findViewById(R.id.Question);
-        answer = findViewById(R.id.answer);
-        referer = findViewById(R.id.referer);
+        TextInputEditText username = findViewById(R.id.username);
+        TextInputEditText fn = findViewById(R.id.first_name);
+        TextInputEditText ln = findViewById(R.id.last_name);
+        TextInputEditText email = findViewById(R.id.email);
+        TextInputEditText pass1 = findViewById(R.id.password);
+        TextInputEditText pass2 = findViewById(R.id.confirm_password);
+        TextInputEditText question = findViewById(R.id.Question);
+        TextInputEditText answer = findViewById(R.id.answer);
+        TextInputEditText referer_v = findViewById(R.id.referer);
         setContentView(R.layout.activity_sign_up);
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        currentUser = mAuth.getCurrentUser();
-
-        if (!(currentUser != null && currentUser.equals(null))) {
-            Database user_db = new Database(Sign_Up.this, User.ref);
-            assert currentUser != null;
-            String user_key = user_db.retrieve_object_key("email",
-                    currentUser.getEmail());
-            if (user_key.length() > 0) {
-                UserRef = database.getReference(User.ref);
-                UserRef.child(user_key).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        a_user = dataSnapshot.getValue(User.class);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-            if (Integer.parseInt(a_user.getLevel()) == 0) {
-                Intent payment = new Intent(Sign_Up.this, Account.class);
-                startActivity(payment);
-            } else {
-                String userEmail = currentUser.getEmail();
-                Intent account = new Intent(this, Account.class);
-                account.putExtra("email", userEmail);
-                startActivity(account);
-            }
-
-
-        } else {
-            user_email = email.getText().toString();
-            first_password = pass1.getText().toString();
-            second_password = pass2.getText().toString();
-            user_fn = fn.getText().toString();
-            user_ln = ln.getText().toString();
-            user_name = username.getText().toString();
-            refer_username = referer.getText().toString();
-            Bitcoin_wallet = wallet.getText().toString();
-            rec_que = question.getText().toString();
-            rec_ans = question.getText().toString();
-        }
+        user_email = email.getText().toString();user_ln = ln.getText().toString();
+        user_fn = fn.getText().toString();first_password = pass1.getText().toString();
+        second_password = pass2.getText().toString();rec_que = question.getText().toString();
+        rec_ans = answer.getText().toString();refer_username = referer_v.getText().toString();
+        user_name = username.getText().toString();
     }
 
     public void Sign_up(View v){
         if ((user_email.length() > 0) && (user_fn.length() > 0) && (user_ln.length() > 0) && (first_password.length() > 0) &&
-                (second_password.length() > 0) && (Bitcoin_wallet.length() > 0) &&
+                (second_password.length() > 0)  &&
                 (rec_que.length() > 0) && (rec_ans.length() > 0) && (refer_username.length() > 0) &&
                 user_name.length() > 0){
-            if (first_password.equals(second_password)){
-                mAuth.createUserWithEmailAndPassword(user_email, first_password)
-
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("Message", "createUserWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    new_user = new User();
-                                    new_user.setAnswer(rec_ans);
-                                    assert user != null;
-                                    new_user.setEmail(user.getEmail());
-                                    new_user.setQuestion(rec_que);
-                                    new_user.setFirst_name(user_fn);
-                                    new_user.setWallet_address(Bitcoin_wallet);
-                                    new_user.setLast_name(user_ln);
-                                    new_user.setPassword(first_password);
-                                    new_user.setUsername(user_name);
-                                    Database user_db = new Database(Sign_Up.this, User.ref);
-                                    String referer_key = user_db.retrieve_object_key("username",
-                                            refer_username);
-                                    if (referer_key.length() > 0){
-                                        DatabaseReference UserRef;
-                                            UserRef = database.getReference(User.ref);
-                                        UserRef.child(referer_key).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                a_user = dataSnapshot.getValue(User.class);
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                                Log.e("Message: ", "User not Found");
-                                            }
-                                        });
-                                            if (a_user.getLevel().equals(Level_1.name)) {
-                                                New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
+            User get_user = User.retrieve_user("username",user_name);
+            if (get_user == null) {
+                if (first_password.equals(second_password)) {
+                    mAuth.createUserWithEmailAndPassword(user_email, first_password)
+                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification();
+                                        Log.d("Message", "createUserWithEmail:success");
+                                        new_user = new User();
+                                        new_user.setAnswer(rec_ans);
+                                        new_user.setEmail(user_email);
+                                        new_user.setQuestion(rec_que);
+                                        new_user.setFirst_name(user_fn);
+                                        new_user.setLast_name(user_ln);
+                                        new_user.setPassword(first_password);
+                                        new_user.setUsername(user_name);
+                                        User referer = retrieve_user("username",
+                                                refer_username);
+                                        if (referer == null) {
+                                            complete_sign_up();
+                                        } else {
+                                            if (referer.getLevel().equals(Level_1.name)) {
+                                                New_Users newUser = new New_Users(new_user.getUsername(), referer.getUsername());
                                                 String db_id = UserRef.push().getKey();
-                                                new_user.setReferer(a_user.getUsername());
+                                                new_user.setReferer(referer.getUsername());
                                                 UserRef.child(db_id).setValue(new_user);
                                                 DatabaseReference New_userRef = database.getReference(New_Users.ref);
                                                 String d_id = New_userRef.push().getKey();
@@ -166,24 +106,26 @@ public class Sign_Up extends AppCompatActivity{
                                                 create_wallet();
                                                 //create wallet stop
                                                 Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-                                                Intent payment = new Intent(Sign_Up.this, Payment.class);
+                                                Intent payment = new Intent(Sign_Up.this, Sign_In.class);
                                                 startActivity(payment);
-                                            }else {
+                                            } else {
                                                 complete_sign_up();
                                             }
-                                    }else {
-                                        complete_sign_up();
+                                        }
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w("Message: ", "createUserWithEmail:failure", task.getException());
+                                        Toast.makeText(Sign_Up.this, Objects.requireNonNull(task.getException()).getMessage(),
+                                                Toast.LENGTH_LONG).show();
                                     }
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("Message: ", "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(Sign_Up.this, "Sign Up failed.",
-                                            Toast.LENGTH_LONG).show();
                                 }
-                            }
-                        });
+                            });
+                } else {
+                    Toast.makeText(Sign_Up.this, "The Two Passwords Must Match", Toast.LENGTH_LONG).show();
+
+                }
             }else{
-                Toast.makeText(Sign_Up.this, "The Two Passwords Must Match", Toast.LENGTH_LONG).show();
+                Toast.makeText(Sign_Up.this, "Username is already taken", Toast.LENGTH_LONG).show();
             }
             }else{
             Toast.makeText(Sign_Up.this, "All Fields Must Be Filled", Toast.LENGTH_LONG).show();
@@ -193,20 +135,8 @@ public class Sign_Up extends AppCompatActivity{
         public void complete_sign_up(){
             Database level_1 = new Database(Sign_Up.this, Level_1.ref);
             String refer_key = level_1.get_oldest_key();
-            DatabaseReference URef;
-            URef = database.getReference(User.ref);
-            URef.child(refer_key).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    a_user = dataSnapshot.getValue(User.class);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e("Message: ", "User not Found");
-                }
-            });
-            New_Users newUser = new New_Users(new_user.getUsername(), a_user.getUsername());
+            String old_referer = Level_1.Retrieve_1_by_Id(refer_key).getUsername();
+            New_Users newUser = new New_Users(new_user.getUsername(), old_referer);
             String db_id = UserRef.push().getKey();
             UserRef.child(db_id).setValue(new_user);
             DatabaseReference New_userRef = database.getReference(New_Users.ref);
@@ -214,15 +144,11 @@ public class Sign_Up extends AppCompatActivity{
             New_userRef.child(d_id).setValue(newUser);
             create_wallet();
             Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-            Intent payment = new Intent(Sign_Up.this, Payment.class);
+            Intent payment = new Intent(Sign_Up.this, Sign_In.class);
             startActivity(payment);
         }
         public void create_wallet(){
             Wallet be = new Wallet();
-            params = new HashMap<>();
-            params.put("password",first_password);
-            params.put("api_key", API_KEY);
-            StringBuilder sb = StringBuild(params);
             Downloader b = new Downloader(Sign_Up.this,"https://blockchain.info/api/v2/create?" +
                     "password="+first_password+
                     "&api_code="+API_KEY,

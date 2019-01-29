@@ -33,6 +33,8 @@ import com.wordpress.louieefitness.geld.Utilities.Make_Pay;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.wordpress.louieefitness.geld.Models.User.Retrieve_user_by_Id;
+import static com.wordpress.louieefitness.geld.Models.User.Update_user;
 
 public class Account extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -210,23 +212,6 @@ public class Account extends AppCompatActivity {
         });
         return the_key;
     }
-    public User Retrieve_user_by_Id(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(User.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                the_user = dataSnapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(Account.this, "Item was not found in database", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        return the_user;
-    }
 
     public void cash_out(View v){
         my_money = String.valueOf(withdraw * 100000000);
@@ -331,10 +316,7 @@ public class Account extends AppCompatActivity {
         });
         return oldest_key;
     }
-    public void Update_user(String db_id, User user) {
-        DatabaseReference myRef = database.getReference(User.ref);
-        myRef.child(db_id).setValue(user);
-    }
+
     public Wallet Retrieve_wallet_by_Id(String db_id) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference(Wallet.Ref);

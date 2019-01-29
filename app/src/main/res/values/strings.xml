@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Geld</string>
     <string name="icon">icon</string>
-    <string name="info">Before Clicking the button below, please ensure that your wallet has been funded with at least 0.003btc</string>
-    <string name="notice">You are seeing this Page because your investment has not yet been verified, Please Be Patient</string>
+    <string name="info">Before Clicking the button below, please ensure that your wallet has been funded with at least 0.003btc.</string>
+    <string name="notice">You are seeing this Page because your investment has not yet been verified, Please Be Patient.</string>
     <string name="sign_off">Sign off</string>
+    <string name="verification_message">Your Email has not been verified, A verification message has been sent to you.</string>
+    <string name="verify">Please ensure that your email address has been verified, If not Please check your mail.</string>
 </resources>
