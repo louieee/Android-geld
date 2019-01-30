@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.AppCompat.DayNight"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <LinearLayout
@@ -28,13 +29,14 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
             android:hint="First Name"
-            android:textColorHint="@color/colorAccent"
             android:inputType="text"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
@@ -42,12 +44,14 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
             android:hint="Last Name"
             android:inputType="text"
             android:maxLines="1"
@@ -59,6 +63,7 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
+        android:textColorHint="@color/colorAccent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
@@ -66,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:maxLines="1"/>
 
@@ -75,84 +80,84 @@
     <android.support.design.widget.TextInputLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
     android:layout_margin="10dp">
     <android.support.design.widget.TextInputEditText
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email Address"
-        
-        android:textColorHint="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         android:inputType="textEmailAddress"
         android:maxLines="1"/>
 </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/referer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Referer's Username"
-            
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/Question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password Recovery Question"
-            
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password Recovery Answer"
-            
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="text"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="textPassword"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/colorAccent"
         android:layout_margin="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirm Password"
-            
-            android:textColorHint="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:inputType="textPassword"
             android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>

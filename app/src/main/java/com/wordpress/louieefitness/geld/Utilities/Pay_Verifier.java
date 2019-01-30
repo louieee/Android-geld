@@ -15,16 +15,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.wordpress.louieefitness.geld.Account;
+import com.wordpress.louieefitness.geld.Activities.Account;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
-import com.wordpress.louieefitness.geld.Models.Wallet;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 
 import static java.net.URLDecoder.decode;
 

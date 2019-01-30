@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.AppCompat.DayNight"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
@@ -35,7 +36,6 @@
             android:textAlignment="center"
             android:layout_margin="10dp"
             android:layout_weight="0"
-            
             android:background="@color/colorAccent">
         </TextView>
 
@@ -51,6 +51,7 @@
                 android:textSize="24sp"
                 android:padding="10dp"
                 android:text="Username: "
+                android:textColor="@color/colorPrimaryDark"
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
                 android:layout_weight="0"
@@ -64,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:padding="10dp"
+                android:textColor="@color/colorPrimaryDark"
                 android:text="Username"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
@@ -81,6 +83,7 @@
                 android:id="@+id/email_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="24sp"
                 android:padding="10dp"
                 android:text="Email Address: "
@@ -96,6 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
+                android:textColor="@color/colorPrimaryDark"
                 android:padding="10dp"
                 android:text="Email"
                 android:textAlignment="textStart"
@@ -112,6 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
+                android:textColor="@color/colorPrimaryDark"
                 android:padding="10dp"
                 android:text="Level: "
                 android:textAlignment="viewStart"
@@ -127,6 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
+                android:textColor="@color/colorPrimaryDark"
                 android:padding="10dp"
                 android:text="Level"
                 android:textAlignment="textStart"
@@ -162,6 +168,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="24sp"
                 android:padding="10dp"
                 android:text="Balance: "
@@ -179,6 +186,7 @@
                 android:textSize="24sp"
                 android:padding="10dp"
                 android:text="Payout"
+                android:textColor="@color/colorPrimaryDark"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
                 
@@ -190,35 +198,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp">
-            <Button
+            <TextView
                 android:id="@+id/cash_out"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:background="@drawable/round"
+                android:background="@drawable/outline_color"
                 android:layout_margin="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:onClick="cash_out"
-                android:padding="5dp"
+                android:gravity="center"
                 android:text="Cash Out "
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textColor="@color/colorAccent"
                 >
 
-            </Button>
-            <Button
+            </TextView>
+            <TextView
                 android:id="@+id/upgrade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:background="@drawable/round_green"
+                android:background="@drawable/my_design"
                 android:layout_margin="10dp"
+                android:gravity="center"
                 android:onClick="Upgrade"
-                android:padding="5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:text="Upgrade "
                 android:layout_weight="1"
-                android:textColor="@color/white"
+                android:textColor="@color/colorAccent"
                 >
-            </Button>
+            </TextView>
         </LinearLayout>
 
     </LinearLayout>

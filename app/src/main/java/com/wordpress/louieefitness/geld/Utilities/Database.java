@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Utilities;
 
 import android.content.Context;
 import android.util.Log;

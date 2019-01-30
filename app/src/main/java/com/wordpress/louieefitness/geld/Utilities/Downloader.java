@@ -2,27 +2,11 @@ package com.wordpress.louieefitness.geld.Utilities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-import com.wordpress.louieefitness.geld.Account;
-import com.wordpress.louieefitness.geld.Database;
-import com.wordpress.louieefitness.geld.Models.Level_1;
-import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.New_Account;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -30,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.logging.Level;
 
 public class Downloader extends AsyncTask<Void,Void,String> {
     @SuppressLint("StaticFieldLeak")

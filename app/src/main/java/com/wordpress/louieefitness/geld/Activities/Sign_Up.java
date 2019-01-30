@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,23 +12,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.wordpress.louieefitness.geld.Utilities.Database;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
-import static com.wordpress.louieefitness.geld.Utilities.Builder.StringBuild;
 
 public class Sign_Up extends AppCompatActivity{
     public static String API_KEY = "";

@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 public class Payment extends AppCompatActivity {
@@ -88,7 +89,7 @@ public class Payment extends AppCompatActivity {
         String key = retrieve_object_key(User.ref,"email",current_user.getEmail());
         Downloader invest = new Downloader(Payment.this, "https://blockchain.info/merchant/"+
                 my_wallet.getGuid()+"/payment?password="+
-                my_wallet.getPassword()+"&to="+Sign_Up.ADDRESS+
+                my_wallet.getPassword()+"&to="+ Sign_Up.ADDRESS+
                 "&amount="+"250000",null,be,"send bitcoin");
         invest.execute();
 

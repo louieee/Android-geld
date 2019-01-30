@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 public class New_Account extends AppCompatActivity {

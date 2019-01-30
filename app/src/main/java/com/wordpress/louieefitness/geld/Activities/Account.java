@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,6 +29,7 @@ import com.wordpress.louieefitness.geld.Models.Level_5;
 import com.wordpress.louieefitness.geld.Models.Level_6;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Make_Pay;
 
 import static android.view.View.GONE;
@@ -38,7 +39,7 @@ import static com.wordpress.louieefitness.geld.Models.User.Update_user;
 
 public class Account extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private Button cash, upgrade;
+    private TextView cash, upgrade;
     private String the_key,oldest_key;
     private User the_user, my_user;
     private Wallet the_wallet;

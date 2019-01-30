@@ -5,14 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.wordpress.louieefitness.geld.Account;
 import com.wordpress.louieefitness.geld.Models.User;
-import com.wordpress.louieefitness.geld.Models.Wallet;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

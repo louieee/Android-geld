@@ -1,7 +1,6 @@
 package com.wordpress.louieefitness.geld.Models;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -10,7 +9,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.wordpress.louieefitness.geld.Account;
 
 public class User {
     private String username, first_name, last_name,  email;

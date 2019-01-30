@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld;
+package com.wordpress.louieefitness.geld.Activities;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.R;
 
 public class SplashScreen extends AppCompatActivity {
 
