@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.wordpress.louieefitness.geld.Activities.Account;
+import com.wordpress.louieefitness.geld.Activities.User_Wallet;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 
@@ -47,6 +48,9 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
             case "get balance":
                 res = (this.my_wallet_bal());
                 break;
+            case "send money":
+                res = (this.send_bit());
+                break;
         }
         return res;
     }
@@ -69,8 +73,21 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
                     Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();
                 }
             }else if (action.equals("get balance")){
-                Toast.makeText(c, "Your balance is "+result.getBalance().toString()+" BTC",
-                        Toast.LENGTH_SHORT).show();
+                Wallet.update_wallet("email",result.getEmail(),result);
+                if (u == null){
+                    Toast.makeText(c, "Your balance is "+result.getBalance().toString()+" BTC",
+                            Toast.LENGTH_SHORT).show();
+                }else{
+                    c.startActivity(new Intent(c,User_Wallet.class));
+                }
+            }else if (action.equals("send money")) {
+                if (result.getGuid().startsWith("Sent")) {
+                    Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                    Intent n = new Intent(c, User_Wallet.class);
+                    c.startActivity(n);
+                } else {
+                    Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                }
             }
 
         }
@@ -96,6 +113,7 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
         return null;
     }
     private Wallet get_userWallet(){
+
         Wallet c = new Wallet();
         try{
             JSONObject j = new JSONObject(JsonData);
@@ -116,6 +134,20 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
             Double bal = Double.parseDouble(balance) / 100000000;
             m_wallet.setBalance(bal);
             return m_wallet;
+
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private Wallet send_bit(){
+        Wallet c = new Wallet();
+        try{
+            JSONObject j = new JSONObject(JsonData);
+            Wallet my_wallet = new Wallet();
+            String guid = decode(j.getString("message"), "UTF-8");
+            my_wallet.setGuid(guid);
+            return c;
 
         } catch (JSONException | IOException e) {
             e.printStackTrace();

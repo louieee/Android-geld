@@ -46,7 +46,6 @@
             android:layout_height="wrap_content"
             android:padding="5dp">
             <TextView
-                android:id="@+id/username_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
@@ -199,7 +198,7 @@
                 android:layout_marginStart="100dp"
                 android:layout_marginEnd="100dp"
                 android:layout_gravity="center"
-                android:onClick="Upgrade"
+                android:onClick="Send_Bit_coin"
                 android:padding="5dp"
                 android:text="Send"
                 android:layout_weight="1"

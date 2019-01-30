@@ -15,6 +15,9 @@
         <activity android:name=".Activities.Sign_Up" />
         <activity android:name=".Activities.SplashScreen" />
         <activity android:name=".Activities.New_Account" />
+        <activity android:name=".Activities.Wallet" />
+        <activity android:name=".Activities.User_Wallet" />
+        <activity android:name=".Activities.Forgot_Password" />
     </application>
 
 </manifest>
