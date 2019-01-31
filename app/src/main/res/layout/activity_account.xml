@@ -2,7 +2,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.AppCompat.DayNight"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
@@ -20,6 +19,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 app:titleTextColor="@android:color/white"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
                 android:layout_height="50dp"
                 app:title="GELD - Account"
                 app:titleMarginStart="20dp">
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Account Information"
-            android:textSize="24sp"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:padding="10dp"
             android:textColor="@color/black"
             android:textAlignment="center"
@@ -43,34 +43,28 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="10dp">
             <TextView
                 android:id="@+id/username_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:text="Username: "
                 android:textColor="@color/colorPrimaryDark"
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
                 android:layout_weight="0"
-                
-
                 >
 
             </TextView>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="Username"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
-                
-
                 >
 
             </TextView>
@@ -78,29 +72,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="10dp">
             <TextView
                 android:id="@+id/email_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:text="Email Address: "
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
                 android:layout_weight="0"
-                
-
                 >
 
             </TextView>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/colorPrimaryDark"
-                android:padding="10dp"
                 android:text="Email"
                 android:textAlignment="textStart"
                 android:layout_weight="1"
@@ -111,13 +101,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="10dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
                 android:textColor="@color/colorPrimaryDark"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:text="Level: "
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
@@ -131,7 +120,7 @@
                 android:id="@+id/level_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/colorPrimaryDark"
                 android:padding="10dp"
                 android:text="Level"
@@ -148,15 +137,15 @@
             android:padding="10dp">
             <ImageView
                 android:id="@+id/icon_a"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:src="@drawable/stage_1"/>
             <ProgressBar
                 android:id="@+id/no_received_"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="10dp"
+                android:layout_marginTop="15dp"
                 android:progressDrawable="@drawable/progress_bar"
                 style = "@android:style/Widget.Holo.ProgressBar.Horizontal"/>
         </LinearLayout>
@@ -164,13 +153,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="10dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:text="Balance: "
                 android:textAlignment="viewStart"
                 android:textStyle="bold"
@@ -183,8 +171,7 @@
                 android:id="@+id/total_payout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:padding="10dp"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:text="Payout"
                 android:textColor="@color/colorPrimaryDark"
                 android:textAlignment="textStart"
@@ -202,7 +189,7 @@
                 android:id="@+id/cash_out"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                style="@style/Base.TextAppearance.AppCompat.Button"
                 android:background="@drawable/outline_color"
                 android:layout_margin="10dp"
                 android:paddingTop="10dp"
@@ -219,7 +206,7 @@
                 android:id="@+id/upgrade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                style="@style/Base.TextAppearance.AppCompat.Button"
                 android:background="@drawable/my_design"
                 android:layout_margin="10dp"
                 android:gravity="center"

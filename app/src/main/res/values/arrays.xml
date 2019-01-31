@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name = "pref_font_entries">
+        <item>@string/small</item>
+        <item>@string/normal</item>
+        <item>@string/large</item>
+        <item>@string/very_large</item>
+    </array>
+
+    <array name = "pref_font_entry_values">
+        <item>@string/level_1</item>
+        <item>@string/level_2</item>
+        <item>@string/level_3</item>
+        <item>@string/level_4</item>
+    </array>
+    <array name = "pref_theme_entries">
+        <item>@string/light</item>
+        <item>@string/dark</item>
+    </array>
+
+    <array name = "pref_theme_entry_values">
+        <item>@string/level_1</item>
+        <item>@string/level_2</item>
+    </array>
+
+
+</resources>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class Forgot_Password extends AppCompatActivity{
     private Context c;
     private TextView password,question,pass_info;
     private TextInputEditText email,pass_answer;
+    private LinearLayout pass_;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +37,9 @@ public class Forgot_Password extends AppCompatActivity{
         pass_info = findViewById(R.id.pass_info);
         email = findViewById(R.id.email_re);
         pass_answer = findViewById(R.id.pass_answer);
+        pass_ = findViewById(R.id.pass_info_main);
         pass_info.setVisibility(GONE);
+        pass_.setVisibility(GONE);
         password.setVisibility(GONE);
         question.setVisibility(GONE);
         pass_answer.setVisibility(GONE);
@@ -63,6 +67,7 @@ public class Forgot_Password extends AppCompatActivity{
                             Toast.makeText(c,"This Field must be Filled",Toast.LENGTH_LONG).show();
                         }else{
                             if (pass_answer.getText().toString().equalsIgnoreCase(the_user.getAnswer())){
+                                pass_.setVisibility(VISIBLE);
                                 pass_info.setVisibility(VISIBLE);
                                 password.setText(the_user.getPassword());
                                 password.setVisibility(VISIBLE);

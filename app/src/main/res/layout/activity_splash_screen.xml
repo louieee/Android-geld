@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="GELD"
         android:textColor="@color/colorPrimary"
-        android:textSize="42sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:typeface="sans"

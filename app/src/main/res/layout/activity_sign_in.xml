@@ -2,7 +2,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.AppCompat.DayNight"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
@@ -21,6 +20,7 @@
                 android:layout_width="match_parent"
                 app:titleTextColor="@android:color/white"
                 android:layout_height="50dp"
+                app:titleTextAppearance ="@style/TextAppearance.AppCompat.Title"
                 app:title="GELD - Sign In"
                 app:titleMarginStart="20dp">
 
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:text="@string/verify"
             android:padding="15dp"
-            android:textSize="20sp"
+            style="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="italic"/>
 
@@ -44,6 +44,7 @@
                 android:id="@+id/email_t"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:hint="Email Address"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorAccent"
@@ -62,6 +63,7 @@
                 android:id="@+id/password_t"
                 android:layout_width="match_parent"
                 android:textColor="@color/colorPrimaryDark"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:layout_height="wrap_content"
                 android:hint="Password"
                 android:inputType="textPassword"
@@ -78,13 +80,9 @@
                 android:id="@+id/signIn"
                 android:layout_gravity="start"
                 android:text="Sign In"
-                android:paddingLeft="20dp"
-                android:textSize="20sp"
+                style="@style/Base.Widget.AppCompat.ActionButton"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:layout_margin="10dp"
-                android:paddingRight="20dp"
-                android:layout_weight="0"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 android:defaultFocusHighlightEnabled="true"
                 android:textColorHighlight="@color/colorPrimaryDark"
                 android:background="@drawable/outline_color"
@@ -104,47 +102,48 @@
                 android:paddingEnd="20dp"
                 android:paddingStart="0dp"
                 android:onClick="ForgotPassword"
-                android:textSize="20sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textStyle="italic"
                 android:textColor="@color/colorAccent"
                 android:hapticFeedbackEnabled="true"/>
 
         </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-    <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Don't have an account?"
-            android:gravity="end"
-            android:paddingBottom="10dp"
-            android:textColorHighlight="@color/colorPrimary"
-            android:paddingEnd="0dp"
-        android:textStyle="italic"
-            android:paddingStart="20dp"
-            android:textSize="20sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:hapticFeedbackEnabled="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Sign_up"
-            android:text="Sign Up"
-            android:layout_weight="0"
-            android:paddingBottom="10dp"
-            android:textColorHighlight="@color/colorPrimaryDark"
-            android:paddingEnd="20dp"
-            android:paddingStart="5dp"
-            android:onClick="SignUp"
-            android:textSize="20sp"
-            android:textColor="@color/colorPrimary"
-            android:hapticFeedbackEnabled="true"/>
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account?"
+                android:gravity="end"
+                android:paddingBottom="10dp"
+                android:textColorHighlight="@color/colorPrimary"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:paddingEnd="0dp"
+                android:textStyle="italic"
+                android:paddingStart="20dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:hapticFeedbackEnabled="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/Sign_up"
+                android:text="Sign Up"
+                android:layout_weight="0"
+                android:paddingBottom="10dp"
+                android:textColorHighlight="@color/colorPrimaryDark"
+                android:paddingEnd="20dp"
+                android:paddingStart="5dp"
+                android:onClick="SignUp"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/colorPrimary"
+                android:hapticFeedbackEnabled="true"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
