@@ -10,6 +10,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
+import com.wordpress.louieefitness.geld.R;
+
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener{
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -31,7 +33,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.pref_unn_info);
+        addPreferencesFromResource(R.xml.pref_geld);
         getPreferenceScreen().setLayoutResource(R.layout.activity_settings);
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);

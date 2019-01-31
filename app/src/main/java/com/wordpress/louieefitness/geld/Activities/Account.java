@@ -1,9 +1,11 @@
 package com.wordpress.louieefitness.geld.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +39,7 @@ import static android.view.View.VISIBLE;
 import static com.wordpress.louieefitness.geld.Models.User.Retrieve_user_by_Id;
 import static com.wordpress.louieefitness.geld.Models.User.Update_user;
 
-public class Account extends AppCompatActivity {
+public class Account extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private FirebaseAuth mAuth;
     private TextView cash, upgrade;
     private String the_key,oldest_key;
@@ -52,6 +54,7 @@ public class Account extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
@@ -336,5 +339,31 @@ public class Account extends AppCompatActivity {
         return the_wallet;
     }
 
+
+    public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
+        String value = sharedPreferences.getString(getString(R.string.Theme_key), getString(R.string.level_1));
+        if (value.equalsIgnoreCase("1")){
+            getApplicationContext().setTheme(R.style.Light);
+        }else if (value.equalsIgnoreCase("2")){
+            getApplicationContext().setTheme(R.style.Dark);
+        }
+    }
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferenceTheme(sharedPreferences);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.Theme_key))){
+            sharedPreferenceTheme(sharedPreferences);
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
 
 }

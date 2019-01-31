@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-android:id="@+id/ViewNews"
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".ViewNews">
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -39,13 +31,3 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-<android.support.design.widget.NavigationView
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    app:menu="@menu/navigation_menu5"
-    android:id="@+id/Nav_view"
-    android:layout_gravity="start"
-    app:headerLayout="@layout/navigation_header"
-    android:fitsSystemWindows="true"/>
-
-</android.support.v4.widget.DrawerLayout>
