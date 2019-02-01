@@ -23,6 +23,8 @@ import com.wordpress.louieefitness.geld.Utilities.Downloader;
 public class User_Wallet extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private Context c;
     private Wallet myWallet;
+    public final static String Key = "1";
+    private Boolean checked;
     private TextInputEditText amount,receiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +55,6 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         }
 
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-    }
 
     public void Send_Bit_coin(View v){
         if (amount.getText().toString().isEmpty() || receiver.getText().toString().isEmpty()){
@@ -78,10 +75,13 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
     public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
         String value = sharedPreferences.getString(getString(R.string.Theme_key), getString(R.string.level_1));
         if (value.equalsIgnoreCase("1")){
-            c.setTheme(R.style.Light);
+            getApplicationContext().setTheme(R.style.Light);
         }else if (value.equalsIgnoreCase("2")){
-            c.setTheme(R.style.Dark);
+            getApplicationContext().setTheme(R.style.Dark);
         }
+    }
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
     }
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -93,8 +93,23 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Theme_key))){
             sharedPreferenceTheme(sharedPreferences);
+        }else if (key.equals(getString(R.string.Lock_key))){
+            sharedPreferenceLock(sharedPreferences);
         }
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (checked){
+            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
+            .putExtra("key",Key));
+        }
+    }
 
 }

@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:title="@string/Font_pref"
-        android:defaultValue="@string/level_2"
-        android:entries="@array/pref_font_entries"
-        android:entryValues="@array/pref_font_entry_values"
-        android:key="@string/Font_key"
-        />
+
     <ListPreference
         android:title="@string/Theme_pref"
         android:defaultValue="@string/level_1"
@@ -15,6 +9,14 @@
         android:entryValues="@array/pref_theme_entry_values"
         android:key="@string/Theme_key"
         />
+    <CheckBoxPreference
+        android:title="@string/Lock_pref"
+        android:longClickable="true"
+        android:defaultValue="true"
+        android:key="@string/Lock_key"
+        />
+<EditTextPreference
 
+    />
 
 </PreferenceScreen>

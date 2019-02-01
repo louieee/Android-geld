@@ -43,8 +43,10 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
     private FirebaseAuth mAuth;
     private TextView cash, upgrade;
     private String the_key,oldest_key;
-    private User the_user, my_user;
+    private User my_user;
     private Wallet the_wallet;
+    public final static String Key = "4";
+    private Boolean checked;
     final Double Bal_residue = 0.001;
     private String my_money;
     private Double minimum, upgrade_money;
@@ -348,6 +350,9 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             getApplicationContext().setTheme(R.style.Dark);
         }
     }
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
+    }
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferenceTheme(sharedPreferences);
@@ -358,6 +363,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Theme_key))){
             sharedPreferenceTheme(sharedPreferences);
+        }else if (key.equals(getString(R.string.Lock_key))){
+            sharedPreferenceLock(sharedPreferences);
         }
     }
     @Override
@@ -366,4 +373,12 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (checked){
+            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
+            .putExtra("key",Key));
+        }
+    }
 }

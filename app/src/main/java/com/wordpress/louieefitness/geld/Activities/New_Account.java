@@ -1,5 +1,6 @@
 package com.wordpress.louieefitness.geld.Activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,9 +26,10 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
     private Wallet mWallet;
     private String the_key;
     private User the_user;
+    private Boolean checked;
+    public final static String Key = "3";
     private New_Users d_user;
-    private TextView username;
-    private TextView email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +38,8 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseUser current_user = mAuth.getCurrentUser();
         setContentView(R.layout.activity_new_account);
-        username = findViewById(R.id.New_user_name);
-        email = findViewById(R.id.New_user_email);
+        TextView username = findViewById(R.id.New_user_name);
+        TextView email = findViewById(R.id.New_user_email);
         String user_id = retrieve_object_key(User.ref,"email", current_user.getEmail());
         User u = Retrieve_user_by_Id(user_id);
         String _id = retrieve_object_key(Wallet.Ref,"email", current_user.getEmail());
@@ -133,6 +135,9 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
             getApplicationContext().setTheme(R.style.Dark);
         }
     }
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
+    }
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferenceTheme(sharedPreferences);
@@ -143,6 +148,8 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Theme_key))){
             sharedPreferenceTheme(sharedPreferences);
+        }else if (key.equals(getString(R.string.Lock_key))){
+            sharedPreferenceLock(sharedPreferences);
         }
     }
     @Override
@@ -151,5 +158,13 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (checked){
+            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
+                    .putExtra("key",Key));
+        }
+    }
 }
 

@@ -48,6 +48,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             if (!(p instanceof CheckBoxPreference)) {
                 String Value = sharedPreferences.getString(p.getKey(), "");
                 setPreferenceSummary(p, Value);
+            }else {
+                setPreferenceSummary(p,null);
             }
         }
     }
@@ -66,6 +68,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
              if (prefIndex >= 0){
                  listPreference.setSummary(listPreference.getEntries()[prefIndex]);
              }
+        }else if (p instanceof CheckBoxPreference){
+            CheckBoxPreference CheckPreference = (CheckBoxPreference) p;
+            Boolean checked = CheckPreference.isChecked();
+            if (checked){
+                CheckPreference.setSummary("Sign in is required when app is restarted");
+            }else{
+                CheckPreference.setSummary("Sign in is not required when app is restarted");
+            }
         }
     }
+
 }

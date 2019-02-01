@@ -1,5 +1,6 @@
 package com.wordpress.louieefitness.geld.Activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,6 +26,8 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
     private FirebaseAuth mAuth;
     private FirebaseUser current_user;
     private String the_key;
+    public final static String Key = "2";
+    private Boolean checked;
     private Wallet my_wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,9 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
             getApplicationContext().setTheme(R.style.Dark);
         }
     }
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
+    }
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferenceTheme(sharedPreferences);
@@ -117,6 +123,8 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Theme_key))){
             sharedPreferenceTheme(sharedPreferences);
+        }else if (key.equals(getString(R.string.Lock_key))){
+            sharedPreferenceLock(sharedPreferences);
         }
     }
     @Override
@@ -125,4 +133,12 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (checked){
+            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
+            .putExtra("key",Key));
+        }
+    }
 }

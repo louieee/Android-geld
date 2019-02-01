@@ -38,6 +38,7 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
         user_email = email_t.getText().toString();
         user_password = password_t.getText().toString();
 
+
     }
 
     public void SignIn(View v) {
@@ -54,13 +55,25 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Sign_In.this, "Sign Up Successfull", Toast.LENGTH_LONG).show();
                                     if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
-                                        if (user.getLevel().equals(New_Users.name)) {
-                                            Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
-                                            startActivity(new Intent(Sign_In.this, Payment.class));
-                                        } else {
-                                            Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
-                                            startActivity(new Intent(Sign_In.this, Account.class));
+                                        switch (getIntent().getStringExtra("key")){
+                                            case Account.Key :
+                                                startActivity(new Intent(Sign_In.this, Account.class));break;
+                                            case New_Account.Key :
+                                                startActivity(new Intent(Sign_In.this, New_Account.class));break;
+                                            case Payment.Key :
+                                                startActivity(new Intent(Sign_In.this, Payment.class));break;
+                                            case User_Wallet.Key :
+                                                startActivity(new Intent(Sign_In.this, User_Wallet.class));break;
+                                            default:
+                                                if (user.getLevel().equals(New_Users.name)) {
+                                                    Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
+                                                    startActivity(new Intent(Sign_In.this, Payment.class));
+                                                } else {
+                                                    Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
+                                                    startActivity(new Intent(Sign_In.this, Account.class));
+                                                }
                                         }
+
                                     } else {
                                         email_t.setText("");
                                         password_t.setText("");

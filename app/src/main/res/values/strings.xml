@@ -6,21 +6,14 @@
     <string name="sign_off">Sign off</string>
     <string name="verification_message">Your Email has not been verified, A verification message has been sent to you.</string>
     <string name="verify">Please ensure that your email address has been verified, If not Please check your mail.</string>
-    <string name="Font_pref">Font Size</string>
-    <string name="Font_key">font</string>
-    <string name="small">Small</string>
-    <string name="normal">Normal</string>
-    <string name="large">Large</string>
-    <string name="very_large">Very Large</string>
-    <string name="Theme_pref">Theme</string>
+    <string name="Theme_pref">Set Theme</string>
     <string name="Theme_key">theme</string>
+    <string name="Lock_key">lock</string>
     <string name="dark">Dark Theme</string>
     <string name="light">Light Theme</string>
-    <string name="level_1">1</string>
-    <string name="level_2">2</string>
-    <string name="level_3">3</string>
-    <string name="level_4">4</string>
-
+    <string name="level_1" translatable="false">1</string>
+    <string name="level_2" translatable="false">2</string>
+    <string name="Lock_pref">Lock App</string>
 
 
 </resources>
