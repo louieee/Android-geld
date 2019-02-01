@@ -1,5 +1,6 @@
 package com.wordpress.louieefitness.geld.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +22,9 @@ import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.R;
 
 import java.util.Objects;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
     private FirebaseAuth mAuth;
@@ -125,5 +130,38 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
+
+    public void exit_app (View v){
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit App? ")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        moveTaskToBack(true);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
+    }
+    public void toggle_nav (View v){
+        final LinearLayout nav = findViewById(R.id.nav_bar);
+        switch (nav.getVisibility()) {
+            case VISIBLE:
+                nav.setVisibility(GONE);
+                break;
+            case GONE:
+                nav.setVisibility(VISIBLE);
+                break;
+            case View.INVISIBLE:
+                break;
+        }
+    }
+
 
 }

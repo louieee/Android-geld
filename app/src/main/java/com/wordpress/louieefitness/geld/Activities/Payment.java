@@ -1,11 +1,13 @@
 package com.wordpress.louieefitness.geld.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,9 @@ import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class Payment extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private FirebaseAuth mAuth;
@@ -139,6 +144,45 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
         if (checked){
             getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
             .putExtra("key",Key));
+        }
+    }
+    public void open_settings (View v){
+        startActivity(new Intent(this,SettingsActivity.class));
+    }
+
+    public void sign_out (View v){
+        mAuth.signOut();
+        startActivity(new Intent(this,Sign_In.class));
+    }
+    public void exit_app (View v){
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit App? ")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        moveTaskToBack(true);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
+    }
+    public void toggle_nav (View v){
+        final LinearLayout nav = findViewById(R.id.nav_bar);
+        switch (nav.getVisibility()) {
+            case VISIBLE:
+                nav.setVisibility(GONE);
+                break;
+            case GONE:
+                nav.setVisibility(VISIBLE);
+                break;
+            case View.INVISIBLE:
+                break;
         }
     }
 }

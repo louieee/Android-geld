@@ -18,6 +18,7 @@
         <activity android:name=".Activities.New_Account" />
         <activity android:name=".Activities.User_Wallet" />
         <activity android:name=".Activities.Forgot_Password" />
+        <activity android:name=".Activities.SettingsActivity" />
     </application>
 
 </manifest>

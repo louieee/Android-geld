@@ -13,18 +13,71 @@
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round"
-            android:layout_margin="10dp">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            android:background="@color/colorPrimaryDark"
+            android:padding="10dp"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
-                app:titleTextColor="@android:color/white"
-                android:layout_height="50dp"
-                app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
-                app:title="GELD - New Account"
-                app:titleMarginStart="20dp">
+                android:layout_height="wrap_content"
+                android:background="@drawable/outline_color"
+                android:orientation="horizontal">
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="0dp"
+                    app:titleTextColor="@color/colorAccent"
+                    app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:layout_height="50dp"
+                    android:layout_weight="2"
+                    app:title="GELD - Account">
+                </android.support.v7.widget.Toolbar>
+                <ImageView
+                    android:id="@+id/expand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="toggle_nav"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_unfold_more_white_24dp"/>
+            </LinearLayout>
 
-            </android.support.v7.widget.Toolbar>
+            <LinearLayout
+                android:id="@+id/nav_bar"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:padding="10dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/colorAccent"
+                    android:onClick="open_settings"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/ic_settings_black_24dp"
+                    android:textAlignment="center"
+                    android:text="Settings"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/colorAccent"
+                    android:onClick="sign_out"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/ic_compare_arrows_black_24dp"
+                    android:textAlignment="center"
+                    android:text="Sign Out"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/colorAccent"
+                    android:onClick="exit_app"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/ic_power_settings_new_black_24dp"
+                    android:textAlignment="center"
+                    android:text="Exit"/>
+            </LinearLayout>
         </android.support.design.widget.AppBarLayout>
         <TextView
             android:layout_width="match_parent"

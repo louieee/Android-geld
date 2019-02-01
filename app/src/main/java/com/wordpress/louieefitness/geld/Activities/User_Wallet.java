@@ -1,6 +1,7 @@
 package com.wordpress.louieefitness.geld.Activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,18 +22,22 @@ import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class User_Wallet extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private Context c;
     private Wallet myWallet;
     public final static String Key = "1";
     private Boolean checked;
+    private FirebaseAuth mAuth;
     private TextInputEditText amount,receiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         c = User_Wallet.this;
         TextView e_mail = findViewById(R.id.wallet_email);
         TextView address = findViewById(R.id.wallet_address);
@@ -110,6 +116,48 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
             getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
             .putExtra("key",Key));
         }
+    }
+    public void open_settings (View v){
+        startActivity(new Intent(this,SettingsActivity.class));
+    }
+
+    public void sign_out (View v){
+        mAuth.signOut();
+        startActivity(new Intent(this,Sign_In.class));
+    }
+    public void exit (View v){
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit App? ")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        moveTaskToBack(true);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
+    }
+    public void toggle_nav (View v){
+        final LinearLayout nav = findViewById(R.id.nav_bar);
+        switch (nav.getVisibility()) {
+            case VISIBLE:
+                nav.setVisibility(GONE);
+                break;
+            case GONE:
+                nav.setVisibility(VISIBLE);
+                break;
+            case View.INVISIBLE:
+                break;
+        }
+    }
+    public void open_account (View v){
+        startActivity(new Intent(this,Account.class));
     }
 
 }
