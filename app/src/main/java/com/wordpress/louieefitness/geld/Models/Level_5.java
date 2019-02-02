@@ -13,7 +13,7 @@ import com.google.firebase.database.ValueEventListener;
 public class Level_5 {
     private String username;
     private static Level_5 level5_user;
-    private String no_received = String.valueOf(0);
+    private int no_received = (0);
     final public static String ref = "Level_5";
     final public static String name = "Master";
     private Boolean Reached_limit = getLimit();
@@ -31,7 +31,7 @@ public class Level_5 {
         this.username = username;
     }
 
-    public void setNo_received(String no_received) {
+    public void setNo_received(int no_received) {
         this.no_received = no_received;
     }
 
@@ -40,15 +40,15 @@ public class Level_5 {
         return username;
     }
 
-    public String getNo_received() {
+    public int getNo_received() {
         return no_received;
     }
 
     private Boolean getLimit(){
         Boolean result = false;
-        if (Integer.parseInt(no_received)< 32){
+        if ((no_received)< 32){
             result = false;
-        }else if (Integer.parseInt(no_received) == 32){
+        }else if ((no_received) == 32){
             result = true;
         }
         return result;
@@ -104,9 +104,9 @@ public class Level_5 {
                 }
 
                 if (p.getUsername().equals(username) ) {
-                    int num = Integer.parseInt(p.getNo_received());
+                    int num = (p.getNo_received());
                     num = num + 1;
-                    p.setNo_received(String.valueOf(num));
+                    p.setNo_received((num));
                     if (num == 32){
                         p.setReached_limit(true);
                     }

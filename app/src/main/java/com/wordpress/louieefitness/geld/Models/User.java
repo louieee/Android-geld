@@ -12,9 +12,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class User {
     private String username, first_name, last_name,  email;
-    private String question, answer, password, referer;
+    private String question, answer, password, salt, referer;
     private static User the_user;
-    private String Balance = String.valueOf(0);
+    private Double Balance = 0.0;
     private String level = New_Users.name;
     public  static final String ref = "User";
 
@@ -25,6 +25,14 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getReferer() {
@@ -80,11 +88,11 @@ public class User {
         this.answer = answer;
     }
 
-    public String getBalance() {
+    public Double getBalance() {
         return Balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Double balance) {
         this.Balance = balance;
     }
 
@@ -119,9 +127,9 @@ public class User {
                 }
 
                 if (p.getUsername().equals(username) ) {
-                    Double num = Double.parseDouble(p.getBalance());
+                    Double num = p.getBalance();
                     num = num + amount;
-                    p.setBalance(String.valueOf(num));
+                    p.setBalance((num));
                 }
                 mutableData.setValue(p);
                 return Transaction.success(mutableData);
