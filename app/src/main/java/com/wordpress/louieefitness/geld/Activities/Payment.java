@@ -43,7 +43,7 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
         setContentView(R.layout.activity_payment);
         current_user = mAuth.getCurrentUser();
         assert current_user != null;
-        Wallet wallet = Retrieve_by_Id(retrieve_object_key(Wallet.Ref,"email",current_user.getEmail()));
+        Wallet wallet = retrieve_wallet("email",current_user.getEmail());
         set_wallet_balance(wallet);
         String wallet_details = "Wallet Address: "+wallet.getAddress()+"/n"+
                 "Wallet Balance: "+wallet.getBalance().toString()+" BTC";

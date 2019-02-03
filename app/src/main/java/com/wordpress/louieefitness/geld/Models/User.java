@@ -12,7 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class User {
     private String username, first_name, last_name,  email;
-    private String question, answer, password, salt, referer;
+    private String question, answer, password, referer;
     private static User the_user;
     private Double Balance = 0.0;
     private String level = New_Users.name;
@@ -25,14 +25,6 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
     }
 
     public String getReferer() {

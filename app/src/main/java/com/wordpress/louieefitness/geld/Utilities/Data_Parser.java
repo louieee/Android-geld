@@ -67,7 +67,7 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
             }else if (action.equals("send bitcoin")){
                 if (result.getGuid().startsWith("Sent")){
                     Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();
-                    Intent n = new Intent(c, Account.class);
+                    Intent n = new Intent(c, New_Account.class);
                     c.startActivity(n);
                 }else{
                     Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();

@@ -64,27 +64,40 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
             //transfer user to Level 1
             Level_1 n_u = new Level_1();
             n_u.setUsername(u.getUsername());
-            Add_To_Level_1(Level_1.ref, n_u);
             //delete user from new users
             String my_key = retrieve_object_key(New_Users.ref, "username", u.getUsername());
             Delete_New_User(New_Users.ref, my_key);
-            //Check if referer no < 2 && if referer is in level1
-            String ref_key = retrieve_object_key(Level_1.ref, "username", u.getReferer());
-            if (ref_key.isEmpty()) {
+            if (u.getReferer.IsEmpty()){
                 String ref_username = get_the_referer();
-                Update_no_received(ref_username);
-                update_user(ref_username);
-            } else {
-                Level_1 r = Retrieve_Referer(ref_key);
-                if (Integer.parseInt(r.getNo_received()) < 2) {
-                    Update_no_received(u.getReferer());
-                } else {
-                    String ref_username = get_the_referer();
+                if (ref_username != null) {
                     Update_no_received(ref_username);
                     update_user(ref_username);
                 }
+
+            }else {
+                //Check if referer no < 2 && if referer is in level1
+                String ref_key = retrieve_object_key(Level_1.ref, "username", u.getReferer());
+                if (ref_key.isEmpty()) {
+                    String ref_username = get_the_referer();
+                    if (ref_username != null) {
+                        Update_no_received(ref_username);
+                        update_user(ref_username);
+                    }
+                } else {
+                    Level_1 r = Retrieve_Referer(ref_key);
+                    if (getNo_received() < 2) {
+                        Update_no_received(u.getReferer());
+                    } else {
+                        String ref_username = get_the_referer();
+                        if (ref_username != null) {
+                            Update_no_received(ref_username);
+                            update_user(ref_username);
+                        }
+                    }
+                }
+                result = true;
             }
-            result = true;
+            Add_To_Level_1(Level_1.ref, n_u);
         } else {
             result = false;
         }
@@ -184,10 +197,16 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
         });
         return oldest_key;
     }
-    private  String get_the_referer(){
+    private  String get_the_referer() {
+        String result;
         String my_id = get_oldest_child();
-        Level_1 re = Retrieve_Referer(my_id);
-        return re.getUsername();
+        if (my_id.IsEmpty() && my_id == null) {
+            result = null;
+        } else
+            Level_1 re = Retrieve_Referer(my_id);
+            result = re.getUsername();
+    }
+    return result;
     }
     private void update_user(String ref){
         u.setReferer(ref);

@@ -47,15 +47,12 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
         setContentView(R.layout.activity_new_account);
         TextView username = findViewById(R.id.New_user_name);
         TextView email = findViewById(R.id.New_user_email);
-        String user_id = retrieve_object_key(User.ref,"email", current_user.getEmail());
-        User u = Retrieve_user_by_Id(user_id);
-        String _id = retrieve_object_key(Wallet.Ref,"email", current_user.getEmail());
-        Wallet w = Retrieve_by_Id(_id);
+        User u = retrieve_user("email", current_user.getEmail());
+        Wallet w = retrieve_wallet("email", current_user.getEmail());
         Downloader verify = new Downloader(this,"https://blockchain.info/q/getsentbyaddress/"
                 +w.getAddress()+"?confirmations=6",u,w,"verify payment");
         verify.execute();
-        String the_id = retrieve_object_key(New_Users.ref,"username",u.getUsername());
-        New_Users newUsers = Retrieve_new_user(the_id);
+        New_Users newUsers = New_Account.retrieve_user("username",u.getUsername());
         username.setText(newUsers.getUsername());
         email.setText(current_user.getEmail());
     }

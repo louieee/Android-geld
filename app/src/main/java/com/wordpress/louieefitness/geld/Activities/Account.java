@@ -77,7 +77,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             //get current user
             //get user through email
         assert current_user != null;
-        my_user = Retrieve_user_by_Id(retrieve_object_key(User.ref,"email", current_user.getEmail()));
+        my_user = retrieve_user("email", current_user.getEmail());
         u_n.setText(my_user.getUsername());
         e_m.setText(my_user.getEmail());
         l_v.setText(my_user.getLevel());
@@ -85,8 +85,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_1.name:
                 minimum = 0.001;
                 upgrade_money = 0.004;
-                Level_1 my1 = Level_1.Retrieve_1_by_Id(retrieve_object_key(Level_1.ref,"username",my_user.getUsername()));
-                int value = (Integer.parseInt(my1.getNo_received()) / 2) * 100;
+                Level_1 my1 = Level_1.retrieve_object("username",my_user.getUsername());
+                int value = (my1.getNo_received() / 2) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_1.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_1);
@@ -100,8 +100,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_2.name:
                 minimum = 0.005;
                 upgrade_money = 0.006;
-                Level_2 my2 = Level_2.Retrieve_1_by_Id(retrieve_object_key(Level_2.ref,"username",my_user.getUsername()));
-                value = (Integer.parseInt(my2.getNo_received())/4) * 100;
+                Level_2 my2 = Level_2.retrieve_object("username",my_user.getUsername());
+                value = (my2.getNo_received()/4) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_2.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_2);
@@ -115,8 +115,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_3.name:
                 minimum = 0.01;
                 upgrade_money = 0.018;
-                Level_3 my3 = Level_3.Retrieve_1_by_Id(retrieve_object_key(Level_3.ref,"username",my_user.getUsername()));
-                value = (Integer.parseInt(my3.getNo_received())/8) * 100;
+                Level_3 my3 = Level_3.retrieve_object("username",my_user.getUsername());
+                value = (my3.getNo_received()/8) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_3.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_3);
@@ -130,8 +130,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_4.name:
                 minimum = 0.05;
                 upgrade_money = 0.088;
-                Level_4 my4 = Level_4.Retrieve_1_by_Id(retrieve_object_key(Level_4.ref,"username",my_user.getUsername()));
-                value = (Integer.parseInt(my4.getNo_received())/16) * 100;
+                Level_4 my4 = Level_4.retrieve_object("username",my_user.getUsername());
+                value = (my4.getNo_received()/16) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_4.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_4);
@@ -145,8 +145,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_5.name:
                 minimum = 0.3;
                 upgrade_money = 0.816;
-                Level_5 my5 = Level_5.Retrieve_1_by_Id(retrieve_object_key(Level_5.ref,"username",my_user.getUsername()));
-                value = (Integer.parseInt(my5.getNo_received())/32) * 100;
+                Level_5 my5 = Level_5.retrieve_object("username",my_user.getUsername());
+                value = (my5.getNo_received()/32) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_5.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_5);
@@ -160,8 +160,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_6.name:
                 minimum = 2.0;
                 upgrade_money = 2.224;
-                Level_6 my6 = Level_6.Retrieve_1_by_Id(retrieve_object_key(Level_6.ref,"username",my_user.getUsername()));
-                value = (Integer.parseInt(my6.getNo_received())/64) * 100;
+                Level_6 my6 = Level_6.retrieve_object("username",my_user.getUsername());
+                value = (my6.getNo_received()/64) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_6.color), PorterDuff.Mode.SRC_IN);
                 icon.setImageResource(R.drawable.stage_6);
@@ -181,7 +181,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
                 upgrade.setVisibility(VISIBLE);
                 break;
         }
-        Double your_cash = Double.parseDouble(my_user.getBalance());
+        Double your_cash = my_user.getBalance();
         withdraw = your_cash - Bal_residue-upgrade_money;
         if (withdraw < 0.0){
             t_p.setText(String.valueOf(0));
@@ -242,50 +242,60 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_1.name:
                 Delete(retrieve_object_key(Level_1.ref,"username",my_user.getUsername()),Level_1.ref);
                 Level_2 n_l = new Level_2(my_user.getUsername());
-                Level_2.Add(n_l);
                 Level_2 r_1 = Level_2.Retrieve_1_by_Id(get_oldest_child_key(Level_2.ref));
-                Level_2.Update_no_received(r_1.getUsername());
-                User.Increment_Balance(r_1.getUsername(),0.004);
+                if (r_1 != null){
+                    Level_2.Update_no_received(r_1.getUsername());
+                    User.Increment_Balance(r_1.getUsername(),0.004);
+                }
+                Level_2.Add(n_l);
                 my_user.setLevel(Level_2.name);
                 Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
                 break;
             case Level_2.name:
                 Delete(retrieve_object_key(Level_2.ref,"username",my_user.getUsername()),Level_2.ref);
                 Level_3 n_2 = new Level_3(my_user.getUsername());
-                Level_3.Add(n_2);
                 Level_3 r_2 = Level_3.Retrieve_1_by_Id(get_oldest_child_key(Level_3.ref));
-                Level_3.Update_no_received(r_2.getUsername());
-                User.Increment_Balance(r_2.getUsername(),0.006);
+                if (r_2 != null){
+                    Level_3.Update_no_received(r_2.getUsername());
+                    User.Increment_Balance(r_2.getUsername(),0.006);
+                }
+                Level_3.Add(n_2);
                 my_user.setLevel(Level_3.name);
                 Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
                 break;
             case Level_3.name:
                 Delete(retrieve_object_key(Level_3.ref,"username",my_user.getUsername()),Level_3.ref);
                 Level_4 n_3 = new Level_4(my_user.getUsername());
-                Level_4.Add(n_3);
                 Level_4 r_3 = Level_4.Retrieve_1_by_Id(get_oldest_child_key(Level_4.ref));
-                Level_4.Update_no_received(r_3.getUsername());
-                User.Increment_Balance(r_3.getUsername(),0.018);
+                if (r_3 != null){
+                    Level_4.Update_no_received(r_3.getUsername());
+                    User.Increment_Balance(r_3.getUsername(),0.018);
+                }
+                Level_4.Add(n_3);
                 my_user.setLevel(Level_4.name);
                 Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
                 break;
             case Level_4.name:
                 Delete(retrieve_object_key(Level_4.ref,"username",my_user.getUsername()),Level_4.ref);
                 Level_5 n_4 = new Level_5(my_user.getUsername());
-                Level_5.Add(n_4);
                 Level_5 r_4 = Level_5.Retrieve_1_by_Id(get_oldest_child_key(Level_5.ref));
-                Level_5.Update_no_received(r_4.getUsername());
-                User.Increment_Balance(r_4.getUsername(),0.088);
+                if (r_4 != null){
+                    Level_5.Update_no_received(r_4.getUsername());
+                    User.Increment_Balance(r_4.getUsername(),0.088);
+                }
+                Level_5.Add(n_4);
                 my_user.setLevel(Level_5.name);
                 Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
                 break;
             case Level_5.name:
                 Delete(retrieve_object_key(Level_5.ref,"username",my_user.getUsername()),Level_5.ref);
                 Level_6 n_5 = new Level_6(my_user.getUsername());
-                Level_6.Add(n_5);
                 Level_6 r_5 = Level_6.Retrieve_1_by_Id(get_oldest_child_key(Level_6.ref));
-                Level_6.Update_no_received(r_5.getUsername());
-                User.Increment_Balance(r_5.getUsername(),0.816);
+                if (r_5 != null){
+                    Level_6.Update_no_received(r_5.getUsername());
+                    User.Increment_Balance(r_5.getUsername(),0.816);
+                }
+                Level_6.Add(n_5);
                 my_user.setLevel(Level_6.name);
                 Update_user(retrieve_object_key(User.ref,"email",my_user.getEmail()),my_user);
                 break;

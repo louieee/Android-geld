@@ -71,8 +71,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
     public void Sign_up(View v){
         if ((user_email.length() > 0) && (user_fn.length() > 0) && (user_ln.length() > 0) && (first_password.length() > 0) &&
                 (second_password.length() > 0)  &&
-                (rec_que.length() > 0) && (rec_ans.length() > 0) && (refer_username.length() > 0) &&
-                user_name.length() > 0){
+                (rec_que.length() > 0) && (rec_ans.length() > 0) && user_name.length() > 0){
             User get_user = User.retrieve_user("username",user_name);
             if (get_user == null) {
                 if (first_password.equals(second_password)) {
@@ -92,27 +91,31 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
                                         new_user.setLast_name(user_ln);
                                         new_user.setPassword(first_password);
                                         new_user.setUsername(user_name);
-                                        User referer = retrieve_user("username",
-                                                refer_username);
-                                        if (referer == null) {
+                                        if (refer_username.isEmpty()){
                                             complete_sign_up();
-                                        } else {
-                                            if (referer.getLevel().equals(Level_1.name)) {
-                                                New_Users newUser = new New_Users(new_user.getUsername(), referer.getUsername());
-                                                String db_id = UserRef.push().getKey();
-                                                new_user.setReferer(referer.getUsername());
-                                                UserRef.child(db_id).setValue(new_user);
-                                                DatabaseReference New_userRef = database.getReference(New_Users.ref);
-                                                String d_id = New_userRef.push().getKey();
-                                                New_userRef.child(d_id).setValue(newUser);
-                                                //create wallet start
-                                                create_wallet();
-                                                //create wallet stop
-                                                Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-                                                Intent payment = new Intent(Sign_Up.this, Sign_In.class);
-                                                startActivity(payment);
-                                            } else {
+                                        }else {
+                                            User referer = retrieve_user("username",
+                                                    refer_username);
+                                            if (referer == null) {
                                                 complete_sign_up();
+                                            } else {
+                                                if (referer.getLevel().equals(Level_1.name)) {
+                                                    New_Users newUser = new New_Users(new_user.getUsername(), referer.getUsername());
+                                                    String db_id = UserRef.push().getKey();
+                                                    new_user.setReferer(referer.getUsername());
+                                                    UserRef.child(db_id).setValue(new_user);
+                                                    DatabaseReference New_userRef = database.getReference(New_Users.ref);
+                                                    String d_id = New_userRef.push().getKey();
+                                                    New_userRef.child(d_id).setValue(newUser);
+                                                    //create wallet start
+                                                    create_wallet();
+                                                    //create wallet stop
+                                                    Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
+                                                    Intent payment = new Intent(Sign_Up.this, Sign_In.class);
+                                                    startActivity(payment);
+                                                } else {
+                                                    complete_sign_up();
+                                                }
                                             }
                                         }
                                     } else {
@@ -138,8 +141,15 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         public void complete_sign_up(){
             Database level_1 = new Database(Sign_Up.this, Level_1.ref);
             String refer_key = level_1.get_oldest_key();
-            String old_referer = Level_1.Retrieve_1_by_Id(refer_key).getUsername();
-            New_Users newUser = new New_Users(new_user.getUsername(), old_referer);
+            New_Users newUser;
+            if (refer_key == null || refer_key.isEmpty()){
+                new_user.setReferer("");
+                newUser = new New_Users(new_user.getUsername(), "");
+            }else{
+                String old_referer = Level_1.Retrieve_1_by_Id(refer_key).getUsername();
+                newUser = new New_Users(new_user.getUsername(), old_referer);
+                new_user.setReferer(old_referer);
+            }
             String db_id = UserRef.push().getKey();
             UserRef.child(db_id).setValue(new_user);
             DatabaseReference New_userRef = database.getReference(New_Users.ref);

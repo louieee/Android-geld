@@ -114,6 +114,26 @@ public class Level_2 {
             }
         });
     }
+    public Level_2 retrieve_object(String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(ref);
+        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    level2_user = childSnapshot.getValue(Level_2.class);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                level1_user = null;
+            }
+        });
+        return level2_user;
+    }
 
 
 }

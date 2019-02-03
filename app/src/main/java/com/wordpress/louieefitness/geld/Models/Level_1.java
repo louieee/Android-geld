@@ -14,11 +14,12 @@ public class Level_1 {
     private String username;
     private static Level_1 level1_user;
     private int no_received = 0;
-    final public static  String  ref = "Level_1";
+    final public static String ref = "Level_1";
     final public static String name = "Beginner";
     private Boolean Reached_limit = getLimit();
     final public static String color = "#ff0404";
-    public Level_1(){
+
+    public Level_1() {
 
     }
 
@@ -52,15 +53,16 @@ public class Level_1 {
     }
 
 
-    private Boolean getLimit(){
+    private Boolean getLimit() {
         Boolean result = false;
-        if (no_received< 2){
+        if (no_received < 2) {
             result = false;
-        }else if (no_received == 2){
+        } else if (no_received == 2) {
             result = true;
         }
         return result;
     }
+
     public static Level_1 Retrieve_1_by_Id(String db_id) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference(Level_1.ref);
@@ -78,13 +80,15 @@ public class Level_1 {
 
         return level1_user;
     }
-    public static void Add(Level_1 level1_user){
+
+    public static void Add(Level_1 level1_user) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(ref);
         String key = myRef.push().getKey();
         myRef.child(key).setValue(level1_user);
 
     }
+
     public static void Update_no_received(final String username) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference the_ref = database.getReference(ref);
@@ -96,17 +100,18 @@ public class Level_1 {
                     return Transaction.success(mutableData);
                 }
 
-                if (p.getUsername().equals(username) ) {
+                if (p.getUsername().equals(username)) {
                     int num = p.getNo_received();
                     num = num + 1;
                     p.setNo_received(num);
-                    if (num == 2){
+                    if (num == 2) {
                         p.setReached_limit(true);
                     }
                 }
                 mutableData.setValue(p);
                 return Transaction.success(mutableData);
             }
+
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
@@ -114,8 +119,24 @@ public class Level_1 {
             }
         });
     }
+    public Level_1 retrieve_object(String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(ref);
+        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    level1_user = childSnapshot.getValue(Level_1.class);
+                }
 
+            }
 
-
-
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                level1_user = null;
+            }
+        });
+        return level1_user;
+    }
 }
