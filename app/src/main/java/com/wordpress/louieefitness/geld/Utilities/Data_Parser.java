@@ -7,7 +7,9 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.wordpress.louieefitness.geld.Activities.Account;
+import com.wordpress.louieefitness.geld.Activities.New_Account;
 import com.wordpress.louieefitness.geld.Activities.User_Wallet;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 
@@ -61,33 +63,38 @@ public class Data_Parser extends AsyncTask<Void,Void,Wallet> {
         if (JsonData == null){
             Toast.makeText(c,"Check your Data Connection",Toast.LENGTH_SHORT).show();
         }else{
-            if (action.equals("create wallet")){
-                Database_Loader loader = new Database_Loader(c,result);
-                loader.execute();
-            }else if (action.equals("send bitcoin")){
-                if (result.getGuid().startsWith("Sent")){
-                    Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();
-                    Intent n = new Intent(c, New_Account.class);
-                    c.startActivity(n);
-                }else{
-                    Toast.makeText(c,result.getGuid(), Toast.LENGTH_LONG).show();
-                }
-            }else if (action.equals("get balance")){
-                Wallet.update_wallet("email",result.getEmail(),result);
-                if (u == null){
-                    Toast.makeText(c, "Your balance is "+result.getBalance().toString()+" BTC",
-                            Toast.LENGTH_SHORT).show();
-                }else{
-                    c.startActivity(new Intent(c,User_Wallet.class));
-                }
-            }else if (action.equals("send money")) {
-                if (result.getGuid().startsWith("Sent")) {
-                    Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
-                    Intent n = new Intent(c, User_Wallet.class);
-                    c.startActivity(n);
-                } else {
-                    Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
-                }
+            switch (action) {
+                case "create wallet":
+                    Database_Loader loader = new Database_Loader(c, result);
+                    loader.execute();
+                    break;
+                case "send bitcoin":
+                    if (result.getGuid().startsWith("Sent")) {
+                        Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                        Intent n = new Intent(c, New_Account.class);
+                        c.startActivity(n);
+                    } else {
+                        Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "get balance":
+                    Wallet.update_wallet(CONSTANTS.email, result.getEmail(), result);
+                    if (u == null) {
+                        Toast.makeText(c, "Your balance is " + result.getBalance().toString() + " BTC",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        c.startActivity(new Intent(c, User_Wallet.class));
+                    }
+                    break;
+                case "send money":
+                    if (result.getGuid().startsWith("Sent")) {
+                        Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                        Intent n = new Intent(c, User_Wallet.class);
+                        c.startActivity(n);
+                    } else {
+                        Toast.makeText(c, result.getGuid(), Toast.LENGTH_LONG).show();
+                    }
+                    break;
             }
 
         }

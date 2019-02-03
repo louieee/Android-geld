@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
@@ -58,25 +59,8 @@ public class Level_4 {
         return Reached_limit;
     }
 
-    public void setReached_limit(Boolean reached_limit) {
-        Reached_limit = reached_limit;
-    }
-    public static Level_4 Retrieve_1_by_Id(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(Level_4.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                level4_user = dataSnapshot.getValue(Level_4.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                level4_user = null;
-            }
-        });
-
-        return level4_user;
+    private void setReached_limit() {
+        Reached_limit = true;
     }
     public static void Add(Level_4 level4_user){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -101,7 +85,7 @@ public class Level_4 {
                     num = num + 1;
                     p.setNo_received((num));
                     if (num == 16){
-                        p.setReached_limit(true);
+                        p.setReached_limit();
                     }
                 }
                 mutableData.setValue(p);
@@ -110,11 +94,11 @@ public class Level_4 {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
-                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
             }
         });
     }
-    public Level_4 retrieve_object(String child, String Query){
+    public static Level_4 retrieve_object(String child, String Query){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
@@ -129,11 +113,33 @@ public class Level_4 {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
                 level4_user = null;
             }
         });
         return level4_user;
     }
+    public static Level_4 get_oldest_object(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(ref);
+        Query oldest = myRef.orderByKey().limitToFirst(1);
+        oldest.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    level4_user = childSnapshot.getValue(Level_4.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
+                level4_user = null;
+            }
+        });
+        return level4_user;
+    }
+
 
 
 }

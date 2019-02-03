@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.R;
@@ -54,7 +55,7 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
         if (email.getText().toString().isEmpty() ){
             Toast.makeText(c,"No Email Address Detected",Toast.LENGTH_LONG).show();
         }else{
-            final User the_user = User.retrieve_user("email",email.getText().toString());
+            final User the_user = User.retrieve_user(CONSTANTS.email,email.getText().toString());
             if (the_user == null){
                 Toast.makeText(c,"No User with this Email Address",Toast.LENGTH_LONG).show();
                 email.setText("");

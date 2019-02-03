@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.R;
@@ -48,7 +49,7 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
 
     public void SignIn(View v) {
         if (!(user_email.isEmpty() || user_password.isEmpty())) {
-            final User user = User.retrieve_user("email", user_email);
+            final User user = User.retrieve_user(CONSTANTS.email, user_email);
             if (user == null) {
                 Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(Sign_In.this, Sign_Up.class));

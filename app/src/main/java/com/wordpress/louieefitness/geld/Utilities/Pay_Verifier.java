@@ -20,6 +20,8 @@ import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 
+import static com.wordpress.louieefitness.geld.Models.Level_1.Add;
+import static com.wordpress.louieefitness.geld.Models.Level_1.Update_no_received;
 import static java.net.URLDecoder.decode;
 
 public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
@@ -57,7 +59,7 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
 
     }
     private Boolean verify_payment() {
-        Boolean result;
+        Boolean result = false;
         Double Bal = Double.parseDouble(JsonData);
         Double Bal_btc = Bal / 100000000;
         if (Bal_btc >= 0.0025) {
@@ -67,46 +69,40 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
             //delete user from new users
             String my_key = retrieve_object_key(New_Users.ref, "username", u.getUsername());
             Delete_New_User(New_Users.ref, my_key);
-            if (u.getReferer.IsEmpty()){
-                String ref_username = get_the_referer();
-                if (ref_username != null) {
-                    Update_no_received(ref_username);
-                    update_user(ref_username);
+            if (u.getReferer().isEmpty()){
+                Level_1 ref_ = Level_1.get_oldest_object();
+                if (ref_ != null) {
+                    Update_no_received(ref_.getUsername());
+                    update_user(ref_.getUsername());
                 }
 
             }else {
                 //Check if referer no < 2 && if referer is in level1
-                String ref_key = retrieve_object_key(Level_1.ref, "username", u.getReferer());
-                if (ref_key.isEmpty()) {
-                    String ref_username = get_the_referer();
-                    if (ref_username != null) {
-                        Update_no_received(ref_username);
-                        update_user(ref_username);
+                Level_1 ref_ = Level_1.retrieve_object("Username",u.getReferer());
+                if (ref_ == null) {
+                    Level_1 ref__ = Level_1.get_oldest_object();
+                    if (ref__ != null) {
+                        Update_no_received(ref__.getUsername());
+                        update_user(ref__.getUsername());
                     }
                 } else {
-                    Level_1 r = Retrieve_Referer(ref_key);
-                    if (getNo_received() < 2) {
-                        Update_no_received(u.getReferer());
+                    if (ref_.getNo_received() < 2) {
+                        Update_no_received(ref_.getUsername());
                     } else {
-                        String ref_username = get_the_referer();
-                        if (ref_username != null) {
-                            Update_no_received(ref_username);
-                            update_user(ref_username);
+                        Level_1 ref__ = Level_1.get_oldest_object();
+                        if (ref__ != null) {
+                            Update_no_received(ref__.getUsername());
+                            update_user(ref__.getUsername());
                         }
                     }
                 }
                 result = true;
             }
-            Add_To_Level_1(Level_1.ref, n_u);
+            Add(n_u);
         } else {
             result = false;
         }
         return result;
-    }
-    private void Add_To_Level_1(String ref, Level_1 new_u) {
-        DatabaseReference d_ref = database.getReference(ref);
-        String db_id = d_ref.push().getKey();
-        d_ref.child(db_id).setValue(new_u);
     }
     private String retrieve_object_key(String ref,String child, String Query){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -123,8 +119,7 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(c, " Database error occurred when retrieving data",
-                        Toast.LENGTH_LONG).show();
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
 
             }
         });
@@ -133,80 +128,6 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
     private void Delete_New_User(String ref,String id){
         DatabaseReference dr = database.getReference(ref).child(id);
         dr.removeValue();
-    }
-    private void Update_no_received(final String Username) {
-        DatabaseReference the_ref = database.getReference(Level_1.ref);
-        the_ref.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Level_1 p = mutableData.getValue(Level_1.class);
-                if (p == null) {
-                    return Transaction.success(mutableData);
-                }
-
-                if (p.getUsername().equals(Username) ) {
-                    int num = Integer.parseInt(p.getNo_received());
-                    num = num + 1;
-                    p.setNo_received(String.valueOf(num));
-                    if (num == 2){
-                        p.setReached_limit(true);
-                    }
-                }
-                mutableData.setValue(p);
-                return Transaction.success(mutableData);
-            }
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
-            }
-        });
-    }
-    private Level_1 Retrieve_Referer(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(Level_1.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ml = dataSnapshot.getValue(Level_1.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(c, "Item was not found in database", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        return ml;
-    }
-    private String get_oldest_child(){
-        DatabaseReference myRef = database.getReference(Level_1.ref);
-        Query oldest = myRef.orderByChild("reached_limit").equalTo(false).limitToFirst(1);
-        oldest.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                    oldest_key = childSnapshot.getKey();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("Message: ", "onCancelled", databaseError.toException());
-            }
-        });
-        return oldest_key;
-    }
-    private  String get_the_referer() {
-        String result;
-        String my_id = get_oldest_child();
-        if (my_id.IsEmpty() && my_id == null) {
-            result = null;
-        } else
-            Level_1 re = Retrieve_Referer(my_id);
-            result = re.getUsername();
-    }
-    return result;
     }
     private void update_user(String ref){
         u.setReferer(ref);

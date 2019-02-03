@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.R;
@@ -51,7 +52,7 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         }else{
             User fake = new User();
             String email = current_user.getEmail();
-            myWallet = Wallet.retrieve_wallet("email", email);
+            myWallet = Wallet.retrieve_wallet(CONSTANTS.email, email);
             Downloader get_bal = new Downloader(c,"https://blockchain.info/merchant/"
                     + myWallet.getGuid()+"/balance?password="+ myWallet.getPassword(),fake, myWallet,"get balance");
             get_bal.execute();

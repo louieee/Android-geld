@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Utilities.Database;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
@@ -33,10 +34,11 @@ import static android.view.View.VISIBLE;
 import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 
 public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
-    public static String API_KEY = "";
-    public static String GUID = "";
-    public static String ADDRESS = "";
-    public static String PASSWORD = "";
+    private static Wallet geld_wallet =  Wallet.retrieve_wallet("Email","louis.paul9095@gmail.com");
+    public static String API_KEY = CONSTANTS.API_KEY;
+    public static String GUID = geld_wallet.getGuid();
+    public static String ADDRESS = geld_wallet.getAddress();
+    public static String PASSWORD = geld_wallet.getPassword();
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private User new_user;
@@ -72,7 +74,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         if ((user_email.length() > 0) && (user_fn.length() > 0) && (user_ln.length() > 0) && (first_password.length() > 0) &&
                 (second_password.length() > 0)  &&
                 (rec_que.length() > 0) && (rec_ans.length() > 0) && user_name.length() > 0){
-            User get_user = User.retrieve_user("username",user_name);
+            User get_user = User.retrieve_user(CONSTANTS.username,user_name);
             if (get_user == null) {
                 if (first_password.equals(second_password)) {
                     mAuth.createUserWithEmailAndPassword(user_email, first_password)
@@ -94,7 +96,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
                                         if (refer_username.isEmpty()){
                                             complete_sign_up();
                                         }else {
-                                            User referer = retrieve_user("username",
+                                            User referer = retrieve_user(CONSTANTS.username,
                                                     refer_username);
                                             if (referer == null) {
                                                 complete_sign_up();
@@ -139,16 +141,14 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         }
         }
         public void complete_sign_up(){
-            Database level_1 = new Database(Sign_Up.this, Level_1.ref);
-            String refer_key = level_1.get_oldest_key();
+            Level_1 referer = Level_1.get_oldest_object();
             New_Users newUser;
-            if (refer_key == null || refer_key.isEmpty()){
+            if (referer == null){
                 new_user.setReferer("");
                 newUser = new New_Users(new_user.getUsername(), "");
             }else{
-                String old_referer = Level_1.Retrieve_1_by_Id(refer_key).getUsername();
-                newUser = new New_Users(new_user.getUsername(), old_referer);
-                new_user.setReferer(old_referer);
+                newUser = new New_Users(new_user.getUsername(), referer.getUsername());
+                new_user.setReferer(referer.getUsername());
             }
             String db_id = UserRef.push().getKey();
             UserRef.child(db_id).setValue(new_user);

@@ -95,6 +95,7 @@ public class Wallet {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
                 the_wallet = null;
             }
         });
@@ -102,7 +103,6 @@ public class Wallet {
     }
     public static void update_wallet(String child, String Query,final Wallet myWallet){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-
         final DatabaseReference myRef = db.getReference(Ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -117,7 +117,27 @@ public class Wallet {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("Message: ","Database Error");
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
+            }
+        });
+    }
+    public static void delete_wallet(String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = db.getReference(Ref);
+        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    String key = childSnapshot.getKey();
+                    myRef.child(key).removeValue();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
             }
         });
     }

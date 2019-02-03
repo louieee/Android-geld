@@ -17,7 +17,6 @@ public class User {
     private Double Balance = 0.0;
     private String level = New_Users.name;
     public  static final String ref = "User";
-
     public User(){
     }
 
@@ -129,7 +128,7 @@ public class User {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
-                Log.d("Message: ", "postTransaction:onComplete:" + databaseError);
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
             }
         });
     }
@@ -148,6 +147,7 @@ public class User {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
                 the_user = null;
             }
         });
@@ -170,10 +170,31 @@ public class User {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
                 the_user = null;
             }
         });
         return the_user;
+    }
+    public static void Delete_user(String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = db.getReference(ref);
+        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    the_user = childSnapshot.getValue(User.class);
+                    String key = childSnapshot.getKey();
+                    myRef.child(key).removeValue();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
+                the_user = null;
+            }
+        });
     }
 
 

@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
@@ -27,6 +28,8 @@ import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
+import static com.wordpress.louieefitness.geld.Models.Wallet.retrieve_wallet;
 
 public class New_Account extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Wallet mWallet;
@@ -47,89 +50,16 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
         setContentView(R.layout.activity_new_account);
         TextView username = findViewById(R.id.New_user_name);
         TextView email = findViewById(R.id.New_user_email);
-        User u = retrieve_user("email", current_user.getEmail());
-        Wallet w = retrieve_wallet("email", current_user.getEmail());
+        assert current_user != null;
+        User u = retrieve_user(CONSTANTS.email, current_user.getEmail());
+        Wallet w = retrieve_wallet(CONSTANTS.email, current_user.getEmail());
         Downloader verify = new Downloader(this,"https://blockchain.info/q/getsentbyaddress/"
                 +w.getAddress()+"?confirmations=6",u,w,"verify payment");
         verify.execute();
-        New_Users newUsers = New_Account.retrieve_user("username",u.getUsername());
+        New_Users newUsers = New_Users.retrieve_user(CONSTANTS.username,u.getUsername());
         username.setText(newUsers.getUsername());
         email.setText(current_user.getEmail());
     }
-
-    public String retrieve_object_key(String ref,String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(ref);
-        Query m_query = myRef.orderByChild(child).equalTo(Query);
-        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_key = childSnapshot.getKey();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(New_Account.this, " Database error occurred when retrieving data",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-        return the_key;
-    }
-    public Wallet Retrieve_by_Id(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(Wallet.Ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mWallet = dataSnapshot.getValue(Wallet.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(New_Account.this, "Item was not found in database", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        return mWallet;
-    }
-    public New_Users Retrieve_new_user(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(New_Users.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                d_user = dataSnapshot.getValue(New_Users.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(New_Account.this, "Item was not found in database", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        return d_user;
-    }
-    public User Retrieve_user_by_Id(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(User.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                the_user = dataSnapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(New_Account.this, "Item was not found in database", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        return the_user;
-    }
-
 
     public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
         String value = sharedPreferences.getString(getString(R.string.Theme_key), getString(R.string.level_1));

@@ -1,10 +1,18 @@
 package com.wordpress.louieefitness.geld.Models;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class New_Users {
     private String Username, referer;
     public static final String ref = "New_Users";
     public static final String name = "Newbie";
-    private static New_User the_user;
+    private static New_Users the_user;
 
     public New_Users(){
 
@@ -41,6 +49,7 @@ public class New_Users {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
                 the_user = null;
             }
         });
