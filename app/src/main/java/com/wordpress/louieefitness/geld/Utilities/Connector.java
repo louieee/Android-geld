@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Connector {
-    public static HttpURLConnection connect (String urlAddress){
+    public static HttpURLConnection connect_get(String urlAddress){
         try {
             URL url = new URL(urlAddress);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -23,6 +23,32 @@ public class Connector {
             i.printStackTrace();
         }
         return null;
+    }
+    public static HttpURLConnection connect_post(String url, StringBuilder Params){
+        try{
+            URL urlObj = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Accept-Charset", "UTF-8");
+
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+
+            conn.connect();
+
+            String paramsString = Params.toString();
+
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(paramsString);
+            wr.flush();
+            wr.close();
+            return conn;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 }
 

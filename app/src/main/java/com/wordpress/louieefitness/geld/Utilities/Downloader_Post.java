@@ -15,15 +15,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class Downloader extends AsyncTask<Void,Void,String> {
+public class Downloader_Post extends AsyncTask<StringBuilder,Void,String> {
     @SuppressLint("StaticFieldLeak")
-    private Context c; @SuppressLint("StaticFieldLeak")
+    private Context c;
+    @SuppressLint("StaticFieldLeak")
     private User u;
     private String urlAddress;
     private String action;
     private Wallet wallet;
 
-    public Downloader(Context c, String url, User u, Wallet wallet, String action){
+    public Downloader_Post(Context c, String url, User u, Wallet wallet, String action) {
         this.c = c;
         this.urlAddress = url;
         this.u = u;
@@ -33,8 +34,9 @@ public class Downloader extends AsyncTask<Void,Void,String> {
 
 
     @Override
-    protected String doInBackground(Void... voids) {
-        return this.downloadData();
+    protected String doInBackground(StringBuilder... stringBuilders) {
+
+        return downloadData(stringBuilders[0]);
     }
 
     @Override
@@ -46,43 +48,35 @@ public class Downloader extends AsyncTask<Void,Void,String> {
     @Override
     protected void onPostExecute(String JsonData) {
         super.onPostExecute(JsonData);
-        if (JsonData == null){
-            Toast.makeText(c,"Check your Data Connection",Toast.LENGTH_SHORT).show();
-        }else {
-            if (action.equals("verify payment")) {
-                Pay_Verifier pay_verifier = new Pay_Verifier(c, JsonData,u);
-                pay_verifier.execute();
-            } else{
+        if (JsonData == null) {
+            Toast.makeText(c, "Check your Data Connection", Toast.LENGTH_SHORT).show();
+        } else {
                 Data_Parser dataParser = new Data_Parser(c, JsonData, wallet, u, action);
-            dataParser.execute();
+                dataParser.execute();
             }
-            }
+        }
 
-    }
-    private String downloadData(){
-        HttpURLConnection conn = Connector.connect_get(urlAddress);
-        if (conn == null){
+    private String downloadData(StringBuilder params) {
+        HttpURLConnection conn = Connector.connect_post(urlAddress, params);
+        if (conn == null) {
             return null;
         }
-        try{
-            InputStream is = new BufferedInputStream(conn.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
+        try {
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder result = new StringBuilder();
             String line;
-            StringBuilder jsonData = new StringBuilder();
-
-            while ((line = br.readLine())!= null){
-                jsonData.append(line).append("\n");
-
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
             }
-            br.close();
-            is.close();
-            return jsonData.toString();
+
+            return result.toString();
+
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            conn.disconnect();
         }
         return null;
     }
-
-
 }

@@ -53,7 +53,7 @@ public class Make_Pay extends AsyncTask<Void,Void,String> {
 
     }
     private String downloadData(){
-        HttpURLConnection conn = Connector.connect(urlAddress);
+        HttpURLConnection conn = Connector.connect_get(urlAddress);
         if (conn == null){
             return null;
         }
