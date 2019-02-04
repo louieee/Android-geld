@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,70 +19,59 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class Forgot_Password extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class User_Wallet extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private Context c;
-    private TextView password,question,pass_info;
-    private TextInputEditText email,pass_answer;
-    private LinearLayout pass_;
+    private Wallet myWallet;
+    public final static String Key = "1";
+    private Boolean checked;
+    private FirebaseAuth mAuth;
+    private TextInputEditText amount,receiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        c = Forgot_Password.this;
-        question = findViewById(R.id.pass_question);
-        password = findViewById(R.id.pass_retrieve);
-        pass_info = findViewById(R.id.pass_info);
-        email = findViewById(R.id.email_re);
-        pass_answer = findViewById(R.id.pass_answer);
-        pass_ = findViewById(R.id.pass_info_main);
-        pass_info.setVisibility(GONE);
-        pass_.setVisibility(GONE);
-        password.setVisibility(GONE);
-        question.setVisibility(GONE);
-        pass_answer.setVisibility(GONE);
-        setContentView(R.layout.activity_forgot_password);
+        mAuth = FirebaseAuth.getInstance();
+        c = User_Wallet.this;
+        TextView e_mail = findViewById(R.id.wallet_email);
+        TextView address = findViewById(R.id.wallet_address);
+        TextView balance = findViewById(R.id.wallet_balance);
+        amount = findViewById(R.id.send_amount);
+        receiver = findViewById(R.id.receiver_address);
+        setContentView(R.layout.activity_wallet);
+        FirebaseUser current_user = mAuth.getCurrentUser();
+        if (current_user == null){
+            startActivity(new Intent(c,Sign_Up.class));
+        }else{
+            User fake = new User();
+            String email = current_user.getEmail();
+            myWallet = Wallet.retrieve_wallet(CONSTANTS.email, email);
+            Downloader get_bal = new Downloader(c,"https://blockchain.info/merchant/"
+                    + myWallet.getGuid()+"/balance?password="+ myWallet.getPassword(),fake, myWallet,"get balance");
+            get_bal.execute();
+            e_mail.setText(myWallet.getEmail());
+            address.setText(myWallet.getAddress());
+            balance.setText(String.valueOf(myWallet.getBalance()));
+        }
 
     }
-    public void Send(View v){
-        if (email.getText().toString().isEmpty() ){
-            Toast.makeText(c,"No Email Address Detected",Toast.LENGTH_LONG).show();
+
+    public void Send_Bit_coin(View v){
+        if (amount.getText().toString().isEmpty() || receiver.getText().toString().isEmpty()){
+            Toast.makeText(c,"All Fields must be Filled",Toast.LENGTH_LONG).show();
         }else{
-            final User the_user = User.retrieve_user(CONSTANTS.email,email.getText().toString());
-            if (the_user == null){
-                Toast.makeText(c,"No User with this Email Address",Toast.LENGTH_LONG).show();
-                email.setText("");
-            }else{
-                email.setVisibility(GONE);
-                question.setText(the_user.getQuestion());
-                question.setVisibility(VISIBLE);
-                pass_answer.setText("");
-                pass_answer.setVisibility(VISIBLE);
-                 v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (pass_answer.getText().toString().isEmpty()){
-                            Toast.makeText(c,"This Field must be Filled",Toast.LENGTH_LONG).show();
-                        }else{
-                            if (pass_answer.getText().toString().equalsIgnoreCase(the_user.getAnswer())){
-                                pass_.setVisibility(VISIBLE);
-                                pass_info.setVisibility(VISIBLE);
-                                password.setText(the_user.getPassword());
-                                password.setVisibility(VISIBLE);
-                            }else{
-                                Toast.makeText(c,"Your Input is Incorrect",Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                });
-            }
+            String money = String.valueOf(Double.parseDouble(amount.getText().toString())*100000000);
+            Downloader sender = new Downloader(c, "https://blockchain.info/merchant/"+
+                    myWallet.getGuid()+"/payment?password="+
+                    myWallet.getPassword()+"&to="+receiver.getText().toString()+
+                    "&amount="+money,null, myWallet,"send money");
+            sender.execute();
+
         }
 
     }
@@ -96,6 +85,9 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
             getApplicationContext().setTheme(R.style.Dark);
         }
     }
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
+    }
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferenceTheme(sharedPreferences);
@@ -106,6 +98,8 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Theme_key))){
             sharedPreferenceTheme(sharedPreferences);
+        }else if (key.equals(getString(R.string.Lock_key))){
+            sharedPreferenceLock(sharedPreferences);
         }
     }
     @Override
@@ -114,7 +108,23 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    public void exit_app (View v){
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (checked){
+            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
+            .putExtra("key",Key));
+        }
+    }
+    public void open_settings (View v){
+        startActivity(new Intent(this,SettingsActivity.class));
+    }
+
+    public void sign_out (View v){
+        mAuth.signOut();
+        startActivity(new Intent(this,Sign_In.class));
+    }
+    public void exit (View v){
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
                 .setTitle("Exit")
                 .setMessage("Are you sure you want to exit App? ")
@@ -145,6 +155,8 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
                 break;
         }
     }
+    public void open_account (View v){
+        startActivity(new Intent(this,Account.class));
+    }
 
 }
-

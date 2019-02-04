@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,12 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Utilities.Database;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import java.util.Objects;
@@ -34,43 +32,53 @@ import static android.view.View.VISIBLE;
 import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 
 public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
-    private static Wallet geld_wallet =  Wallet.retrieve_wallet("Email","louis.paul9095@gmail.com");
     public static String API_KEY = CONSTANTS.API_KEY;
-    public static String GUID = geld_wallet.getGuid();
-    public static String ADDRESS = geld_wallet.getAddress();
-    public static String PASSWORD = geld_wallet.getPassword();
+    public static String GUID;
+    public static String ADDRESS;
+    public static String PASSWORD;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private User new_user;
     private DatabaseReference UserRef;
     private String user_email,user_fn,user_ln,first_password, second_password;
     private String rec_que, rec_ans, refer_username, user_name;
+    private TextInputEditText username,fn,ln,email,pass1,pass2,question,answer, referer_v;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         UserRef = database.getReference(User.ref);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        TextInputEditText username = findViewById(R.id.username);
-        TextInputEditText fn = findViewById(R.id.first_name);
-        TextInputEditText ln = findViewById(R.id.last_name);
-        TextInputEditText email = findViewById(R.id.email);
-        TextInputEditText pass1 = findViewById(R.id.password);
-        TextInputEditText pass2 = findViewById(R.id.confirm_password);
-        TextInputEditText question = findViewById(R.id.Question);
-        TextInputEditText answer = findViewById(R.id.answer);
-        TextInputEditText referer_v = findViewById(R.id.referer);
+        username = findViewById(R.id.username);
+        fn = findViewById(R.id.first_name);
+        ln = findViewById(R.id.last_name);
+        email = findViewById(R.id.email);
+        pass1 = findViewById(R.id.password);
+        pass2 = findViewById(R.id.confirm_password);
+        question = findViewById(R.id.Question);
+        answer = findViewById(R.id.answer);
+        referer_v = findViewById(R.id.referer);
         setContentView(R.layout.activity_sign_up);
+        Wallet geld_wallet =  Wallet.retrieve_wallet("Email","louis.paul9095@gmail.com");
+        if (geld_wallet == null){
+            Toast.makeText(this,"Please Check Your Data Connection",Toast.LENGTH_SHORT).show();
+        }
+        while (geld_wallet != null) {
+            GUID = geld_wallet.getGuid();
+            ADDRESS = geld_wallet.getAddress();
+            PASSWORD = geld_wallet.getPassword();
+        }
+
+    }
+
+    public void Sign_up(View v){
         user_email = email.getText().toString();user_ln = ln.getText().toString();
         user_fn = fn.getText().toString();first_password = pass1.getText().toString();
         second_password = pass2.getText().toString();rec_que = question.getText().toString();
         rec_ans = answer.getText().toString();refer_username = referer_v.getText().toString();
         user_name = username.getText().toString();
-    }
-
-    public void Sign_up(View v){
         if ((user_email.length() > 0) && (user_fn.length() > 0) && (user_ln.length() > 0) && (first_password.length() > 0) &&
                 (second_password.length() > 0)  &&
                 (rec_que.length() > 0) && (rec_ans.length() > 0) && user_name.length() > 0){

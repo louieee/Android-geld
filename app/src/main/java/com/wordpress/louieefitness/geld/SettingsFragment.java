@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
 
 import android.content.SharedPreferences;

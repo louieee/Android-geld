@@ -6,9 +6,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.wordpress.louieefitness.geld.Activities.Account;
-import com.wordpress.louieefitness.geld.Activities.New_Account;
-import com.wordpress.louieefitness.geld.Activities.User_Wallet;
+import com.wordpress.louieefitness.geld.New_Account;
+import com.wordpress.louieefitness.geld.User_Wallet;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;

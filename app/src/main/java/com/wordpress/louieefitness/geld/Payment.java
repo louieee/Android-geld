@@ -1,81 +1,105 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.R;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.wordpress.louieefitness.geld.Models.Wallet.retrieve_wallet;
 
-public class User_Wallet extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
-    private Context c;
-    private Wallet myWallet;
-    public final static String Key = "1";
-    private Boolean checked;
+public class Payment extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private FirebaseAuth mAuth;
-    private TextInputEditText amount,receiver;
+    private FirebaseUser current_user;
+    private String the_key;
+    public final static String Key = "2";
+    private Boolean checked;
+    private Wallet my_wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
-        c = User_Wallet.this;
-        TextView e_mail = findViewById(R.id.wallet_email);
-        TextView address = findViewById(R.id.wallet_address);
-        TextView balance = findViewById(R.id.wallet_balance);
-        amount = findViewById(R.id.send_amount);
-        receiver = findViewById(R.id.receiver_address);
-        setContentView(R.layout.activity_wallet);
-        FirebaseUser current_user = mAuth.getCurrentUser();
-        if (current_user == null){
-            startActivity(new Intent(c,Sign_Up.class));
-        }else{
-            User fake = new User();
-            String email = current_user.getEmail();
-            myWallet = Wallet.retrieve_wallet(CONSTANTS.email, email);
-            Downloader get_bal = new Downloader(c,"https://blockchain.info/merchant/"
-                    + myWallet.getGuid()+"/balance?password="+ myWallet.getPassword(),fake, myWallet,"get balance");
-            get_bal.execute();
-            e_mail.setText(myWallet.getEmail());
-            address.setText(myWallet.getAddress());
-            balance.setText(String.valueOf(myWallet.getBalance()));
-        }
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        setContentView(R.layout.activity_payment);
+        current_user = mAuth.getCurrentUser();
+        assert current_user != null;
+        Wallet wallet = retrieve_wallet(CONSTANTS.email,current_user.getEmail());
+        set_wallet_balance(wallet);
+        String wallet_details = "Wallet Address: "+wallet.getAddress()+"/n"+
+                "Wallet Balance: "+wallet.getBalance().toString()+" BTC";
+        TextView wallet_info = findViewById(R.id.wallet_info);
+        wallet_info.setText(wallet_details);
     }
 
-    public void Send_Bit_coin(View v){
-        if (amount.getText().toString().isEmpty() || receiver.getText().toString().isEmpty()){
-            Toast.makeText(c,"All Fields must be Filled",Toast.LENGTH_LONG).show();
-        }else{
-            String money = String.valueOf(Double.parseDouble(amount.getText().toString())*100000000);
-            Downloader sender = new Downloader(c, "https://blockchain.info/merchant/"+
-                    myWallet.getGuid()+"/payment?password="+
-                    myWallet.getPassword()+"&to="+receiver.getText().toString()+
-                    "&amount="+money,null, myWallet,"send money");
-            sender.execute();
+    public String retrieve_object_key(String ref,String child, String Query){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference(ref);
+        Query m_query = myRef.orderByChild(child).equalTo(Query);
+        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
+                    the_key = childSnapshot.getKey();
+                }
 
-        }
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
+                the_key = "";
+            }
+        });
+        return the_key;
+    }
+    public void set_wallet_balance(Wallet wallet){
+        Downloader get_bal = new Downloader(Payment.this,"https://blockchain.info/merchant/"
+                +wallet.getGuid()+"/balance?password="+wallet.getPassword(),null,wallet,"get balance");
+        get_bal.execute();
+    }
+    public void make_investment(View v){
+        final Wallet be = new Wallet();
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
+                .setTitle("Invest")
+                .setMessage("Ensure that you have Funded your wallet with more than 0.003BTC." +
+                        "Invest ? ")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Downloader invest = new Downloader(Payment.this, "https://blockchain.info/merchant/"+
+                                my_wallet.getGuid()+"/payment?password="+
+                                my_wallet.getPassword()+"&to="+ Sign_Up.ADDRESS+
+                                "&amount="+"250000",null,be,"send bitcoin");
+                        invest.execute();
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
     }
 
 
@@ -126,7 +150,7 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         mAuth.signOut();
         startActivity(new Intent(this,Sign_In.class));
     }
-    public void exit (View v){
+    public void exit_app (View v){
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
                 .setTitle("Exit")
                 .setMessage("Are you sure you want to exit App? ")
@@ -157,8 +181,4 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
                 break;
         }
     }
-    public void open_account (View v){
-        startActivity(new Intent(this,Account.class));
-    }
-
 }

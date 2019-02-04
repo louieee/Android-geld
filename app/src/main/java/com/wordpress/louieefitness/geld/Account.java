@@ -1,6 +1,5 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -24,7 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.Level_1;
@@ -35,15 +32,12 @@ import com.wordpress.louieefitness.geld.Models.Level_5;
 import com.wordpress.louieefitness.geld.Models.Level_6;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.R;
-import com.wordpress.louieefitness.geld.Utilities.Database;
 import com.wordpress.louieefitness.geld.Utilities.Make_Pay;
 
 import java.util.Objects;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.wordpress.louieefitness.geld.Models.User.Retrieve_user_by_Id;
 import static com.wordpress.louieefitness.geld.Models.User.Update_user;
 import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 

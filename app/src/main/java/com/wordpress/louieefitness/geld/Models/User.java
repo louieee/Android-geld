@@ -156,7 +156,6 @@ public class User {
     }
     public static User retrieve_user(String child, String Query){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {

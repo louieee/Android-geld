@@ -1,8 +1,10 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -20,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
-import com.wordpress.louieefitness.geld.R;
 
 import java.util.Objects;
 
@@ -41,14 +42,15 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
         setContentView(R.layout.activity_sign_in);
         email_t = findViewById(R.id.email_t);
         password_t = findViewById(R.id.password_t);
-        user_email = email_t.getText().toString();
-        user_password = password_t.getText().toString();
 
 
     }
 
     public void SignIn(View v) {
+        user_email = email_t.getText().toString();
+        user_password = password_t.getText().toString();
         if (!(user_email.isEmpty() || user_password.isEmpty())) {
+
             final User user = User.retrieve_user(CONSTANTS.email, user_email);
             if (user == null) {
                 Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();

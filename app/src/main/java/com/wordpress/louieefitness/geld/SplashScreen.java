@@ -1,4 +1,4 @@
-package com.wordpress.louieefitness.geld.Activities;
+package com.wordpress.louieefitness.geld;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.wordpress.louieefitness.geld.R;
 
 public class SplashScreen extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -32,8 +31,7 @@ public class SplashScreen extends AppCompatActivity  implements SharedPreference
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run(){
-                Toast.makeText(getApplicationContext(),"Welcome to UNN Info",Toast.LENGTH_SHORT).show();
-                Intent start = new Intent (SplashScreen.this,Sign_Up.class);
+                Intent start = new Intent (SplashScreen.this,Sign_In.class);
                 startActivity(start);
                 finish();
             }
