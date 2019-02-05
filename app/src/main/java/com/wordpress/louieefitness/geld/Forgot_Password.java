@@ -18,7 +18,9 @@ import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.User;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.wordpress.louieefitness.geld.Utilities.utilities.emailValid;
 
 public class Forgot_Password extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     private Context c;
@@ -29,8 +31,7 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        setContentView(R.layout.activity_forgot_password);
         c = Forgot_Password.this;
         question = findViewById(R.id.pass_question);
         password = findViewById(R.id.pass_retrieve);
@@ -38,45 +39,53 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
         email = findViewById(R.id.email_re);
         pass_answer = findViewById(R.id.pass_answer);
         pass_ = findViewById(R.id.pass_info_main);
-        setContentView(R.layout.activity_forgot_password);
 
     }
     public void Send(View v){
-        if (email.getText().toString().isEmpty() ){
-            Toast.makeText(c,"No Email Address Detected",Toast.LENGTH_LONG).show();
-        }else{
-            final User the_user = User.retrieve_user(CONSTANTS.email,email.getText().toString());
-            if (the_user == null){
-                Toast.makeText(c,"No User with this Email Address",Toast.LENGTH_LONG).show();
-                email.setText("");
-            }else{
-                email.setVisibility(GONE);
-                question.setText(the_user.getQuestion());
-                question.setVisibility(VISIBLE);
-                pass_answer.setText("");
-                pass_answer.setVisibility(VISIBLE);
-                 v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (pass_answer.getText().toString().isEmpty()){
-                            Toast.makeText(c,"This Field must be Filled",Toast.LENGTH_LONG).show();
-                        }else{
-                            if (pass_answer.getText().toString().equalsIgnoreCase(the_user.getAnswer())){
-                                pass_.setVisibility(VISIBLE);
-                                pass_info.setVisibility(VISIBLE);
-                                password.setText(the_user.getPassword());
-                                password.setVisibility(VISIBLE);
-                            }else{
-                                Toast.makeText(c,"Your Input is Incorrect",Toast.LENGTH_LONG).show();
-                            }
+        String email_ = email.getText().toString();
+        User the_user = User.retrieve_user(CONSTANTS.email, email.getText().toString());
+        switch (email.getVisibility()) {
+            case VISIBLE:
+                if (email_.isEmpty()) {
+                    Toast.makeText(c, "No Email Address Detected", Toast.LENGTH_LONG).show();
+                } else {
+                    if (!emailValid(email_)){
+                        email.setError("Please Enter a Valid Email Address");
+                    }else {
+                        if (the_user == null) {
+                            Toast.makeText(c, "No User with this Email Address", Toast.LENGTH_LONG).show();
+                            email.setText("");
+                        } else {
+                            email.setVisibility(GONE);
+                            question.setText(the_user.getQuestion());
+                            question.setVisibility(VISIBLE);
+                            pass_answer.setText("");
+                            pass_answer.setVisibility(VISIBLE);
                         }
                     }
-                });
-            }
+                }
+                break;
+            case GONE:
+                if (pass_answer.getText().toString().isEmpty()){
+                    Toast.makeText(c,"This Field must be Filled",Toast.LENGTH_LONG).show();
+                }else{
+                    if (pass_answer.getText().toString().equalsIgnoreCase(the_user.getAnswer())){
+                        pass_.setVisibility(VISIBLE);
+                        pass_info.
+                                setVisibility(VISIBLE);
+                        password.setText(the_user.getPassword());
+                        password.setVisibility(VISIBLE);
+                    }else{
+                        Toast.makeText(c,"Your Input is Incorrect",Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            case INVISIBLE:
+                break;
+
         }
 
-    }
-
+        }
 
     public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
         String value = sharedPreferences.getString(getString(R.string.Theme_key), getString(R.string.level_1));

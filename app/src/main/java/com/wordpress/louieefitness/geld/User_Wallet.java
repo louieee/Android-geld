@@ -38,12 +38,12 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         c = User_Wallet.this;
+        setContentView(R.layout.activity_wallet);
         TextView e_mail = findViewById(R.id.wallet_email);
         TextView address = findViewById(R.id.wallet_address);
         TextView balance = findViewById(R.id.wallet_balance);
         amount = findViewById(R.id.send_amount);
         receiver = findViewById(R.id.receiver_address);
-        setContentView(R.layout.activity_wallet);
         FirebaseUser current_user = mAuth.getCurrentUser();
         if (current_user == null){
             startActivity(new Intent(c,Sign_Up.class));

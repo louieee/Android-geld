@@ -3,8 +3,10 @@ package com.wordpress.louieefitness.geld.Utilities;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Builder {
+public class utilities {
 
     public static StringBuilder StringBuild(HashMap<String, String> params){
         StringBuilder sbParams = new StringBuilder();
@@ -23,6 +25,14 @@ public class Builder {
             i++;
         }
         return sbParams;
+    }
+    public static Boolean emailValid(String email){
+        Pattern pattern;
+        Matcher matcher;
+        final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        pattern = Pattern.compile(EMAIL_PATTERN);
+        matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 }

@@ -63,6 +63,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
         database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
         FirebaseUser current_user = mAuth.getCurrentUser();
+        setContentView(R.layout.activity_account);
         cash = findViewById(R.id.cash_out);
         upgrade = findViewById(R.id.upgrade);
         ImageView icon = findViewById(R.id.icon_a);
@@ -71,7 +72,6 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
         TextView e_m = findViewById(R.id.email_a);
         TextView l_v = findViewById(R.id.level_a);
         TextView t_p = findViewById(R.id.total_payout);
-        setContentView(R.layout.activity_account);
         //display user details
             //get current user
             //get user through email

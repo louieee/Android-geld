@@ -11,7 +11,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 public class User {
-    private String username, first_name, last_name,  email;
+    private String username,email;
     private String question, answer, password, referer;
     private static User the_user;
     private Double Balance = 0.0;
@@ -36,14 +36,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
     }
 
     public String getPassword() {
@@ -89,14 +81,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-
-    public String getLast_name() {
-        return last_name;
     }
 
     public String getLevel() {

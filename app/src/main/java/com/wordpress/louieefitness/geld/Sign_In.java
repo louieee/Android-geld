@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.wordpress.louieefitness.geld.Utilities.utilities.emailValid;
 
 public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
     private FirebaseAuth mAuth;
@@ -50,51 +51,57 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
         user_email = email_t.getText().toString();
         user_password = password_t.getText().toString();
         if (!(user_email.isEmpty() || user_password.isEmpty())) {
-
-            final User user = User.retrieve_user(CONSTANTS.email, user_email);
-            if (user == null) {
-                Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(Sign_In.this, Sign_Up.class));
-            } else {
-                mAuth.signInWithEmailAndPassword(user_email, user_password)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(Sign_In.this, "Sign Up Successfull", Toast.LENGTH_LONG).show();
-                                    if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
-                                        switch (getIntent().getStringExtra("key")){
-                                            case Account.Key :
-                                                startActivity(new Intent(Sign_In.this, Account.class));break;
-                                            case New_Account.Key :
-                                                startActivity(new Intent(Sign_In.this, New_Account.class));break;
-                                            case Payment.Key :
-                                                startActivity(new Intent(Sign_In.this, Payment.class));break;
-                                            case User_Wallet.Key :
-                                                startActivity(new Intent(Sign_In.this, User_Wallet.class));break;
-                                            default:
-                                                if (user.getLevel().equals(New_Users.name)) {
-                                                    Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
-                                                    startActivity(new Intent(Sign_In.this, Payment.class));
-                                                } else {
-                                                    Toast.makeText(Sign_In.this, "Welcome " + user.getFirst_name(), Toast.LENGTH_LONG).show();
+            if (!emailValid(user_email)){
+                email_t.setError("Please Enter a Valid Email Address");
+            }else {
+                final User user = User.retrieve_user(CONSTANTS.email, user_email);
+                if (user == null) {
+                    Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();
+                } else {
+                    mAuth.signInWithEmailAndPassword(user_email, user_password)
+                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(Sign_In.this, "Sign Up Successfull", Toast.LENGTH_LONG).show();
+                                        if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
+                                            switch (getIntent().getStringExtra("key")) {
+                                                case Account.Key:
                                                     startActivity(new Intent(Sign_In.this, Account.class));
-                                                }
-                                        }
+                                                    break;
+                                                case New_Account.Key:
+                                                    startActivity(new Intent(Sign_In.this, New_Account.class));
+                                                    break;
+                                                case Payment.Key:
+                                                    startActivity(new Intent(Sign_In.this, Payment.class));
+                                                    break;
+                                                case User_Wallet.Key:
+                                                    startActivity(new Intent(Sign_In.this, User_Wallet.class));
+                                                    break;
+                                                default:
+                                                    if (user.getLevel().equals(New_Users.name)) {
+                                                        Toast.makeText(Sign_In.this, "Welcome " + user.getUsername(), Toast.LENGTH_LONG).show();
+                                                        startActivity(new Intent(Sign_In.this, Payment.class));
+                                                    } else {
+                                                        Toast.makeText(Sign_In.this, "Welcome " + user.getUsername(), Toast.LENGTH_LONG).show();
+                                                        startActivity(new Intent(Sign_In.this, Account.class));
+                                                    }
+                                            }
 
+                                        } else {
+                                            email_t.setText("");
+                                            password_t.setText("");
+                                            mAuth.getCurrentUser().sendEmailVerification();
+                                            Toast.makeText(Sign_In.this, getString(R.string.verification_message), Toast.LENGTH_LONG).show();
+                                        }
                                     } else {
                                         email_t.setText("");
                                         password_t.setText("");
-                                        mAuth.getCurrentUser().sendEmailVerification();
-                                        Toast.makeText(Sign_In.this, getString(R.string.verification_message), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(Sign_In.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                     }
-                                } else {
-                                    email_t.setText("");
-                                    password_t.setText("");
-                                    Toast.makeText(Sign_In.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                 }
-                            }
-                        });
+                            });
+                }
             }
 
         } else {
