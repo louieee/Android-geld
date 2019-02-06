@@ -59,7 +59,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         question = findViewById(R.id.Question);
         answer = findViewById(R.id.answer);
         referer_v = findViewById(R.id.referer);
-        Wallet geld_wallet =  Wallet.retrieve_wallet("Email","louis.paul9095@gmail.com");
+        Wallet geld_wallet =  Wallet.retrieve_wallet(database, "Email","louis.paul9095@gmail.com");
         if (geld_wallet == null) {
             Toast.makeText(this, "Please Check Your Data Connection", Toast.LENGTH_SHORT).show();
         }else{
@@ -85,7 +85,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
             }else if(user_name.length() <6){
                 username.setError("Username must be at least 6 characters");
             }else{
-                User get_user = User.retrieve_user(CONSTANTS.username, user_name);
+                User get_user = User.retrieve_user(database, CONSTANTS.username, user_name);
                 if (get_user == null) {
                     if (first_password.equals(second_password)) {
                         mAuth.createUserWithEmailAndPassword(user_email, first_password)
@@ -105,7 +105,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
                                             if (refer_username.isEmpty()) {
                                                 complete_sign_up();
                                             } else {
-                                                User referer = retrieve_user(CONSTANTS.username,
+                                                User referer = retrieve_user(database, CONSTANTS.username,
                                                         refer_username);
                                                 if (referer == null) {
                                                     complete_sign_up();
@@ -151,7 +151,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         }
         }
         public void complete_sign_up(){
-            Level_1 referer = Level_1.get_oldest_object();
+            Level_1 referer = Level_1.get_oldest_object(database);
             New_Users newUser;
             if (referer == null){
                 new_user.setReferer("");

@@ -62,15 +62,13 @@ public class Level_6{
     private void setReached_limit() {
         Reached_limit = true;
     }
-    public static void Add(Level_6 level6_user){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static void Add(FirebaseDatabase database,Level_6 level6_user){
         DatabaseReference myRef = database.getReference(ref);
         String key = myRef.push().getKey();
         myRef.child(key).setValue(level6_user);
 
     }
-    public static void Update_no_received(final String username) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static void Update_no_received(FirebaseDatabase database,final String username) {
         DatabaseReference the_ref = database.getReference(ref);
         the_ref.runTransaction(new Transaction.Handler() {
             @Override
@@ -98,15 +96,18 @@ public class Level_6{
             }
         });
     }
-    public static Level_6 retrieve_object(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static Level_6 retrieve_object(FirebaseDatabase db, String child, String Query){
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    level6_user = childSnapshot.getValue(Level_6.class);
+                if (dataSnapshot == null) {
+                    level6_user = null;
+                } else {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        level6_user = childSnapshot.getValue(Level_6.class);
+                    }
                 }
 
             }
@@ -114,27 +115,28 @@ public class Level_6{
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                level6_user = null;
             }
         });
         return level6_user;
     }
-    public static Level_6 get_oldest_object(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static Level_6 get_oldest_object(FirebaseDatabase database){
         DatabaseReference myRef = database.getReference(ref);
         Query oldest = myRef.orderByKey().limitToFirst(1);
         oldest.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                    level6_user = childSnapshot.getValue(Level_6.class);
+                if (dataSnapshot == null) {
+                    level6_user = null;
+                } else{
+                    for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                        level6_user = childSnapshot.getValue(Level_6.class);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                level6_user = null;
             }
         });
         return level6_user;

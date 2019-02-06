@@ -76,7 +76,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             //get current user
             //get user through email
         assert current_user != null;
-        my_user = retrieve_user(CONSTANTS.email, current_user.getEmail());
+        my_user = retrieve_user(database, CONSTANTS.email, current_user.getEmail());
         u_n.setText(my_user.getUsername());
         e_m.setText(my_user.getEmail());
         l_v.setText(my_user.getLevel());
@@ -84,7 +84,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_1.name:
                 minimum = 0.001;
                 upgrade_money = 0.004;
-                Level_1 my1 = Level_1.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_1 my1 = Level_1.retrieve_object(database, CONSTANTS.username,my_user.getUsername());
                 int value = (my1.getNo_received() / 2) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_1.color), PorterDuff.Mode.SRC_IN);
@@ -99,7 +99,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_2.name:
                 minimum = 0.005;
                 upgrade_money = 0.006;
-                Level_2 my2 = Level_2.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_2 my2 = Level_2.retrieve_object(database, CONSTANTS.username,my_user.getUsername());
                 value = (my2.getNo_received()/4) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_2.color), PorterDuff.Mode.SRC_IN);
@@ -114,7 +114,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_3.name:
                 minimum = 0.01;
                 upgrade_money = 0.018;
-                Level_3 my3 = Level_3.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_3 my3 = Level_3.retrieve_object(database, CONSTANTS.username,my_user.getUsername());
                 value = (my3.getNo_received()/8) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_3.color), PorterDuff.Mode.SRC_IN);
@@ -129,7 +129,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_4.name:
                 minimum = 0.05;
                 upgrade_money = 0.088;
-                Level_4 my4 = Level_4.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_4 my4 = Level_4.retrieve_object(database, CONSTANTS.username,my_user.getUsername());
                 value = (my4.getNo_received()/16) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_4.color), PorterDuff.Mode.SRC_IN);
@@ -144,7 +144,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_5.name:
                 minimum = 0.3;
                 upgrade_money = 0.816;
-                Level_5 my5 = Level_5.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_5 my5 = Level_5.retrieve_object(database,CONSTANTS.username,my_user.getUsername());
                 value = (my5.getNo_received()/32) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_5.color), PorterDuff.Mode.SRC_IN);
@@ -159,7 +159,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
             case Level_6.name:
                 minimum = 2.0;
                 upgrade_money = 2.224;
-                Level_6 my6 = Level_6.retrieve_object(CONSTANTS.username,my_user.getUsername());
+                Level_6 my6 = Level_6.retrieve_object(database,CONSTANTS.username,my_user.getUsername());
                 value = (my6.getNo_received()/64) * 100;
                 progress.setProgress(value);
                 progress.getProgressDrawable().setColorFilter(Color.parseColor(Level_6.color), PorterDuff.Mode.SRC_IN);
@@ -198,15 +198,16 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
 
 
     }
-    public String retrieve_object_key(String ref,String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public String retrieve_object_key(FirebaseDatabase db, String ref,String child, String Query){
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_key = childSnapshot.getKey();
+                if (dataSnapshot != null) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        the_key = childSnapshot.getKey();
+                    }
                 }
 
             }
@@ -223,7 +224,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
     public void cash_out(View v){
         my_money = String.valueOf(withdraw * 100000000);
         if (withdraw >= minimum && withdraw_ready){
-            Wallet user_wallet = Retrieve_wallet_by_Id(retrieve_object_key(Wallet.Ref,CONSTANTS.email,my_user.getEmail()));
+            Wallet user_wallet = Retrieve_wallet_by_Id(retrieve_object_key(database, Wallet.Ref,CONSTANTS.email,my_user.getEmail()));
             Make_Pay pay = new Make_Pay(Account.this, "https://blockchain.info/merchant/"+
                     Sign_Up.GUID+"/payment?password="+
                     Sign_Up.PASSWORD+"&to="+user_wallet.getAddress()+
@@ -238,69 +239,69 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
     public void Upgrade(View v){
         switch (my_user.getLevel()){
             case Level_1.name:
-                Delete(retrieve_object_key(Level_1.ref,CONSTANTS.username,my_user.getUsername()),Level_1.ref);
+                Delete(retrieve_object_key(database, Level_1.ref,CONSTANTS.username,my_user.getUsername()),Level_1.ref);
                 Level_2 n_l = new Level_2(my_user.getUsername());
-                Level_2 r_1 = Level_2.get_oldest_object();
+                Level_2 r_1 = Level_2.get_oldest_object(database);
                 if (r_1 != null){
-                    Level_2.Update_no_received(r_1.getUsername());
-                    User.Increment_Balance(r_1.getUsername(),0.004);
+                    Level_2.Update_no_received(database, r_1.getUsername());
+                    User.Increment_Balance(database, r_1.getUsername(),0.004);
                 }
-                Level_2.Add(n_l);
+                Level_2.Add(database, n_l);
                 my_user.setLevel(Level_2.name);
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case Level_2.name:
-                Delete(retrieve_object_key(Level_2.ref,CONSTANTS.username,my_user.getUsername()),Level_2.ref);
+                Delete(retrieve_object_key(database, Level_2.ref,CONSTANTS.username,my_user.getUsername()),Level_2.ref);
                 Level_3 n_2 = new Level_3(my_user.getUsername());
-                Level_3 r_2 = Level_3.get_oldest_object();
+                Level_3 r_2 = Level_3.get_oldest_object(database);
                 if (r_2 != null){
-                    Level_3.Update_no_received(r_2.getUsername());
-                    User.Increment_Balance(r_2.getUsername(),0.006);
+                    Level_3.Update_no_received(database, r_2.getUsername());
+                    User.Increment_Balance(database, r_2.getUsername(),0.006);
                 }
-                Level_3.Add(n_2);
+                Level_3.Add(database, n_2);
                 my_user.setLevel(Level_3.name);
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case Level_3.name:
-                Delete(retrieve_object_key(Level_3.ref,CONSTANTS.username,my_user.getUsername()),Level_3.ref);
+                Delete(retrieve_object_key(database, Level_3.ref,CONSTANTS.username,my_user.getUsername()),Level_3.ref);
                 Level_4 n_3 = new Level_4(my_user.getUsername());
-                Level_4 r_3 = Level_4.get_oldest_object();
+                Level_4 r_3 = Level_4.get_oldest_object(database);
                 if (r_3 != null){
-                    Level_4.Update_no_received(r_3.getUsername());
-                    User.Increment_Balance(r_3.getUsername(),0.018);
+                    Level_4.Update_no_received(database, r_3.getUsername());
+                    User.Increment_Balance(database, r_3.getUsername(),0.018);
                 }
-                Level_4.Add(n_3);
+                Level_4.Add(database, n_3);
                 my_user.setLevel(Level_4.name);
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case Level_4.name:
-                Delete(retrieve_object_key(Level_4.ref,CONSTANTS.username,my_user.getUsername()),Level_4.ref);
+                Delete(retrieve_object_key(database, Level_4.ref,CONSTANTS.username,my_user.getUsername()),Level_4.ref);
                 Level_5 n_4 = new Level_5(my_user.getUsername());
-                Level_5 r_4 = Level_5.get_oldest_object();
+                Level_5 r_4 = Level_5.get_oldest_object(database);
                 if (r_4 != null){
-                    Level_5.Update_no_received(r_4.getUsername());
-                    User.Increment_Balance(r_4.getUsername(),0.088);
+                    Level_5.Update_no_received(database, r_4.getUsername());
+                    User.Increment_Balance(database, r_4.getUsername(),0.088);
                 }
-                Level_5.Add(n_4);
+                Level_5.Add(database, n_4);
                 my_user.setLevel(Level_5.name);
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case Level_5.name:
-                Delete(retrieve_object_key(Level_5.ref,CONSTANTS.username,my_user.getUsername()),Level_5.ref);
+                Delete(retrieve_object_key(database, Level_5.ref,CONSTANTS.username,my_user.getUsername()),Level_5.ref);
                 Level_6 n_5 = new Level_6(my_user.getUsername());
-                Level_6 r_5 = Level_6.get_oldest_object();
+                Level_6 r_5 = Level_6.get_oldest_object(database);
                 if (r_5 != null){
-                    Level_6.Update_no_received(r_5.getUsername());
-                    User.Increment_Balance(r_5.getUsername(),0.816);
+                    Level_6.Update_no_received(database, r_5.getUsername());
+                    User.Increment_Balance(database, r_5.getUsername(),0.816);
                 }
-                Level_6.Add(n_5);
+                Level_6.Add(database, n_5);
                 my_user.setLevel(Level_6.name);
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case Level_6.name:
-                Delete(retrieve_object_key(Level_6.ref,CONSTANTS.username,my_user.getUsername()),Level_6.ref);
+                Delete(retrieve_object_key(database, Level_6.ref,CONSTANTS.username,my_user.getUsername()),Level_6.ref);
                 my_user.setLevel("Finished");
-                Update_user(retrieve_object_key(User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
+                Update_user(database, retrieve_object_key(database, User.ref,CONSTANTS.email,my_user.getEmail()),my_user);
                 break;
             case "Finished":
                 android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
@@ -311,8 +312,8 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                User.Delete_user("Email",my_user.getEmail());
-                                Wallet.delete_wallet("Email",my_user.getEmail());
+                                User.Delete_user(database, "Email",my_user.getEmail());
+                                Wallet.delete_wallet(database, "Email",my_user.getEmail());
                                 Objects.requireNonNull(mAuth.getCurrentUser()).delete();
                                 moveTaskToBack(true);
                                 android.os.Process.killProcess(android.os.Process.myPid());

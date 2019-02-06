@@ -90,8 +90,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-    public static void Increment_Balance(final String username, final Double amount) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static void Increment_Balance(FirebaseDatabase database, final String username, final Double amount) {
         DatabaseReference the_ref = database.getReference(ref);
         the_ref.runTransaction(new Transaction.Handler() {
             @Override
@@ -116,37 +115,35 @@ public class User {
             }
         });
     }
-    public static void Update_user(String db_id, User user) {
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(User.ref);
-        myRef.child(db_id).setValue(user);
-    }
-    public static User Retrieve_user_by_Id(String db_id) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(User.ref);
-        myRef.child(db_id).addValueEventListener(new ValueEventListener() {
+    public static void Update_user(FirebaseDatabase db, final String db_id, final User user) {
+        final DatabaseReference myRef = db.getReference(User.ref);
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                the_user = dataSnapshot.getValue(User.class);
+                if (dataSnapshot.child(db_id).exists()){
+                    myRef.child(db_id).setValue(user);
+                }
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_user = null;
             }
         });
-
-        return the_user;
     }
-    public static User retrieve_user(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static User retrieve_user(FirebaseDatabase db, String child, String Query){
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_user = childSnapshot.getValue(User.class);
+                if (dataSnapshot == null) {
+                    the_user = null;
+                } else{
+                    for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                        the_user = childSnapshot.getValue(User.class);
+                    }
                 }
 
             }
@@ -154,28 +151,27 @@ public class User {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_user = null;
             }
         });
         return the_user;
     }
-    public static void Delete_user(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static void Delete_user(FirebaseDatabase db, String child, String Query){
         final DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_user = childSnapshot.getValue(User.class);
-                    String key = childSnapshot.getKey();
-                    myRef.child(key).removeValue();
+                if (dataSnapshot != null) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        the_user = childSnapshot.getValue(User.class);
+                        String key = childSnapshot.getKey();
+                        myRef.child(key).removeValue();
+                    }
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_user = null;
             }
         });
     }

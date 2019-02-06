@@ -27,11 +27,14 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
     private TextView password,question,pass_info;
     private TextInputEditText email,pass_answer;
     private LinearLayout pass_;
+    private FirebaseDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         setContentView(R.layout.activity_forgot_password);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         c = Forgot_Password.this;
         question = findViewById(R.id.pass_question);
         password = findViewById(R.id.pass_retrieve);
@@ -43,7 +46,7 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
     }
     public void Send(View v){
         String email_ = email.getText().toString();
-        User the_user = User.retrieve_user(CONSTANTS.email, email.getText().toString());
+        User the_user = User.retrieve_user(database, CONSTANTS.email, email.getText().toString());
         switch (email.getVisibility()) {
             case VISIBLE:
                 if (email_.isEmpty()) {

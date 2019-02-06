@@ -33,12 +33,14 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
     private FirebaseAuth mAuth;
     private TextInputEditText email_t, password_t;
     private String user_email, user_password;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_sign_in);
         email_t = findViewById(R.id.email_t);
@@ -54,7 +56,7 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
             if (!emailValid(user_email)){
                 email_t.setError("Please Enter a Valid Email Address");
             }else {
-                final User user = User.retrieve_user(CONSTANTS.email, user_email);
+                final User user = User.retrieve_user(database, CONSTANTS.email, user_email);
                 if (user == null) {
                     Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();
                 } else {

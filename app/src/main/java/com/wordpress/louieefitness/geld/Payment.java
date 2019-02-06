@@ -33,17 +33,19 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
     private String the_key;
     public final static String Key = "2";
     private Boolean checked;
+    private FirebaseDatabase database;
     private Wallet my_wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         setContentView(R.layout.activity_payment);
         current_user = mAuth.getCurrentUser();
         assert current_user != null;
-        Wallet wallet = retrieve_wallet(CONSTANTS.email,current_user.getEmail());
+        Wallet wallet = retrieve_wallet(database, CONSTANTS.email,current_user.getEmail());
         set_wallet_balance(wallet);
         String wallet_details = "Wallet Address: "+wallet.getAddress()+"/n"+
                 "Wallet Balance: "+wallet.getBalance().toString()+" BTC";

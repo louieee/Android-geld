@@ -32,24 +32,26 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
     public final static String Key = "3";
     private New_Users d_user;
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         FirebaseUser current_user = mAuth.getCurrentUser();
         setContentView(R.layout.activity_new_account);
         TextView username = findViewById(R.id.New_user_name);
         TextView email = findViewById(R.id.New_user_email);
         assert current_user != null;
-        User u = retrieve_user(CONSTANTS.email, current_user.getEmail());
-        Wallet w = retrieve_wallet(CONSTANTS.email, current_user.getEmail());
+        User u = retrieve_user(database, CONSTANTS.email, current_user.getEmail());
+        Wallet w = retrieve_wallet(database, CONSTANTS.email, current_user.getEmail());
         Downloader verify = new Downloader(this,"https://blockchain.info/q/getsentbyaddress/"
                 +w.getAddress()+"?confirmations=6",u,w,"verify payment");
         verify.execute();
-        New_Users newUsers = New_Users.retrieve_user(CONSTANTS.username,u.getUsername());
+        New_Users newUsers = New_Users.retrieve_user(database, CONSTANTS.username,u.getUsername());
         username.setText(newUsers.getUsername());
         email.setText(current_user.getEmail());
     }

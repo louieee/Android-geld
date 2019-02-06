@@ -31,11 +31,13 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
     private Boolean checked;
     private FirebaseAuth mAuth;
     private TextInputEditText amount,receiver;
+    private FirebaseDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         c = User_Wallet.this;
         setContentView(R.layout.activity_wallet);
@@ -50,7 +52,7 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         }else{
             User fake = new User();
             String email = current_user.getEmail();
-            myWallet = Wallet.retrieve_wallet(CONSTANTS.email, email);
+            myWallet = Wallet.retrieve_wallet(database, CONSTANTS.email, email);
             Downloader get_bal = new Downloader(c,"https://blockchain.info/merchant/"
                     + myWallet.getGuid()+"/balance?password="+ myWallet.getPassword(),fake, myWallet,"get balance");
             get_bal.execute();

@@ -79,16 +79,18 @@ public class Wallet {
     public void setBalance(Double balance) {
         Balance = balance;
     }
-    public static Wallet retrieve_wallet(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-
+    public static Wallet retrieve_wallet(FirebaseDatabase db,String child, String Query){
         DatabaseReference myRef = db.getReference(Ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_wallet = childSnapshot.getValue(Wallet.class);
+                    if (childSnapshot.exists()) {
+                        the_wallet = childSnapshot.getValue(Wallet.class);
+                    }else{
+                        the_wallet = null;
+                    }
                 }
 
             }
@@ -96,21 +98,21 @@ public class Wallet {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_wallet = null;
             }
         });
         return the_wallet;
     }
-    public static void update_wallet(String child, String Query,final Wallet myWallet){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static void update_wallet(FirebaseDatabase db,String child, String Query,final Wallet myWallet){
         final DatabaseReference myRef = db.getReference(Ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    String key = childSnapshot.getKey();
-                    myRef.child(key).setValue(myWallet);
+                    if (childSnapshot.exists()) {
+                        String key = childSnapshot.getKey();
+                        myRef.child(key).setValue(myWallet);
+                    }
                 }
 
             }
@@ -121,16 +123,17 @@ public class Wallet {
             }
         });
     }
-    public static void delete_wallet(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static void delete_wallet(FirebaseDatabase db,String child, String Query){
         final DatabaseReference myRef = db.getReference(Ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    String key = childSnapshot.getKey();
-                    myRef.child(key).removeValue();
+                    if (childSnapshot.exists()) {
+                        String key = childSnapshot.getKey();
+                        myRef.child(key).removeValue();
+                    }
                 }
 
             }

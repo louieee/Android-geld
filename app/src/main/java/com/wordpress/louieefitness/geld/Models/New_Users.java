@@ -34,15 +34,18 @@ public class New_Users {
     public String getReferer() {
         return referer;
     }
-    public static New_Users retrieve_user(String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+    public static New_Users retrieve_user(FirebaseDatabase db,String child, String Query){
         DatabaseReference myRef = db.getReference(ref);
         com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_user = childSnapshot.getValue(New_Users.class);
+                if (dataSnapshot == null) {
+                    the_user = null;
+                } else{
+                    for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                        the_user = childSnapshot.getValue(New_Users.class);
+                    }
                 }
 
             }
@@ -50,7 +53,6 @@ public class New_Users {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_user = null;
             }
         });
         return the_user;
