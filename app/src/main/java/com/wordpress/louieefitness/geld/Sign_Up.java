@@ -16,8 +16,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
 import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
@@ -84,8 +87,25 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
                 pass1.setError("Password must be at least 8 characters");
             }else if(user_name.length() <6){
                 username.setError("Username must be at least 6 characters");
-            }else{
-                User get_user = User.retrieve_user(database, CONSTANTS.username, user_name);
+            }else {
+                database.getReference("User").orderByChild("Email").equalTo(user_email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            Toast.makeText(Sign_Up.this,"This Email is in Use by Another Account",Toast.LENGTH_SHORT).show();
+                        }else{
+                            //do proper sign in
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+                /*User get_user = User.retrieve_user(database, CONSTANTS.username, user_name);
                 if (get_user == null) {
                     if (first_password.equals(second_password)) {
                         mAuth.createUserWithEmailAndPassword(user_email, first_password)
@@ -145,6 +165,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
                     Toast.makeText(Sign_Up.this, "Username is already taken", Toast.LENGTH_LONG).show();
                 }
             }
+            */
             }else{
             Toast.makeText(Sign_Up.this, "All Fields Must Be Filled", Toast.LENGTH_LONG).show();
 

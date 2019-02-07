@@ -14,6 +14,7 @@ public class User {
     private String username,email;
     private String question, answer, password, referer;
     private static User the_user;
+    private Boolean paid = false;
     private Double Balance = 0.0;
     private String level = New_Users.name;
     public  static final String ref = "User";
@@ -24,6 +25,14 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
     }
 
     public String getReferer() {

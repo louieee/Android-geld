@@ -18,8 +18,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
+import com.wordpress.louieefitness.geld.Models.Level_1;
 import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 
@@ -32,7 +36,6 @@ import static com.wordpress.louieefitness.geld.Utilities.utilities.emailValid;
 public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
     private FirebaseAuth mAuth;
     private TextInputEditText email_t, password_t;
-    private String user_email, user_password;
     private FirebaseDatabase database;
 
     @Override
@@ -48,68 +51,79 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
 
 
     }
-
-    public void SignIn(View v) {
-        user_email = email_t.getText().toString();
-        user_password = password_t.getText().toString();
-        if (!(user_email.isEmpty() || user_password.isEmpty())) {
-            if (!emailValid(user_email)){
-                email_t.setError("Please Enter a Valid Email Address");
+    public void SignIn(View v){
+        if (email_t.getText().toString().length() > 0 && password_t.getText().toString().length()>0) {
+            if (!emailValid(email_t.getText().toString())){
+                   email_t.setError("Enter a Valid Email");
             }else {
-                final User user = User.retrieve_user(database, CONSTANTS.email, user_email);
-                if (user == null) {
-                    Toast.makeText(Sign_In.this, "You Don't Have an account", Toast.LENGTH_LONG).show();
-                } else {
-                    mAuth.signInWithEmailAndPassword(user_email, user_password)
-                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(Sign_In.this, "Sign Up Successfull", Toast.LENGTH_LONG).show();
-                                        if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
-                                            switch (getIntent().getStringExtra("key")) {
-                                                case Account.Key:
-                                                    startActivity(new Intent(Sign_In.this, Account.class));
-                                                    break;
-                                                case New_Account.Key:
-                                                    startActivity(new Intent(Sign_In.this, New_Account.class));
-                                                    break;
-                                                case Payment.Key:
-                                                    startActivity(new Intent(Sign_In.this, Payment.class));
-                                                    break;
-                                                case User_Wallet.Key:
-                                                    startActivity(new Intent(Sign_In.this, User_Wallet.class));
-                                                    break;
-                                                default:
-                                                    if (user.getLevel().equals(New_Users.name)) {
-                                                        Toast.makeText(Sign_In.this, "Welcome " + user.getUsername(), Toast.LENGTH_LONG).show();
-                                                        startActivity(new Intent(Sign_In.this, Payment.class));
-                                                    } else {
-                                                        Toast.makeText(Sign_In.this, "Welcome " + user.getUsername(), Toast.LENGTH_LONG).show();
-                                                        startActivity(new Intent(Sign_In.this, Account.class));
-                                                    }
-                                            }
+                database.getReference("Users").orderByChild("Email").equalTo(email_t.getText().toString()).
+                        addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                        if (dataSnapshot1.child("Password").hasChild(password_t.getText().toString())) {
+                                            mAuth.signInWithEmailAndPassword(email_t.getText().toString(),
+                                                    password_t.getText().toString())
+                                                    .addOnCompleteListener(Sign_In.this, new OnCompleteListener<AuthResult>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                                            if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
+                                                                Toast.makeText(Sign_In.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                                                                switch (getIntent().getStringExtra("Key")) {
+                                                                    case Account.Key:
+                                                                        startActivity(new Intent(Sign_In.this, Account.class));
+                                                                        break;
+                                                                    case New_Account.Key:
+                                                                        startActivity(new Intent(Sign_In.this, New_Account.class));
+                                                                        break;
+                                                                    case Payment.Key:
+                                                                        startActivity(new Intent(Sign_In.this, Payment.class));
+                                                                        break;
+                                                                    case User_Wallet.Key:
+                                                                        startActivity(new Intent(Sign_In.this, User_Wallet.class));
+                                                                        break;
+                                                                    default:
+                                                                        switch (Objects.requireNonNull(dataSnapshot1.child("Level").getValue(String.class))) {
+                                                                            case New_Users.name:
+                                                                                if (!dataSnapshot1.child("Paid").getValue(Boolean.class)) {
+                                                                                    startActivity(new Intent(Sign_In.this, Payment.class));
+                                                                                    break;
+                                                                                } else {
+                                                                                    startActivity(new Intent(Sign_In.this, New_Account.class));
+                                                                                }
+                                                                            default:
+                                                                                startActivity(new Intent(Sign_In.this, Account.class));
+                                                                        }
 
+                                                                }
+
+                                                            } else {
+                                                                mAuth.signOut();
+                                                                Toast.makeText(Sign_In.this, "Your Email has not been Verified", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
                                         } else {
-                                            email_t.setText("");
-                                            password_t.setText("");
-                                            mAuth.getCurrentUser().sendEmailVerification();
-                                            Toast.makeText(Sign_In.this, getString(R.string.verification_message), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(Sign_In.this, "Your Password is Incorrect", Toast.LENGTH_SHORT).show();
                                         }
-                                    } else {
-                                        email_t.setText("");
-                                        password_t.setText("");
-                                        Toast.makeText(Sign_In.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                     }
+                                } else {
+                                    Toast.makeText(Sign_In.this, "You Don't Have an Account", Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                }
-            }
+                            }
 
-        } else {
-            Toast.makeText(Sign_In.this, "All Fields must be Filled", Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(Sign_In.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        }else{
+            Toast.makeText(Sign_In.this, "All Fields must be Filled", Toast.LENGTH_SHORT).show();
         }
     }
+
     public void SignUp(View v){
         startActivity(new Intent(Sign_In.this, Sign_Up.class));
     }
