@@ -16,7 +16,7 @@ public class User {
     private static User the_user;
     private Boolean paid = false;
     private Double Balance = 0.0;
-    private String level = New_Users.name;
+    private String level =  "Newbie";
     public  static final String ref = "User";
     public User(){
     }

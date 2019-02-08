@@ -20,7 +20,6 @@ public class SplashScreen extends AppCompatActivity  implements SharedPreference
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.activity_splash_screen);
         ImageView appIcon = findViewById(R.id.iconDisplay);
         TextView appName = findViewById(R.id.iconName);

@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
@@ -25,22 +24,16 @@ import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 import static com.wordpress.louieefitness.geld.Models.Wallet.retrieve_wallet;
 
 public class New_Account extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private Wallet mWallet;
-    private String the_key;
-    private User the_user;
     private Boolean checked;
     public final static String Key = "3";
-    private New_Users d_user;
     private FirebaseAuth mAuth;
-    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         FirebaseUser current_user = mAuth.getCurrentUser();
         setContentView(R.layout.activity_new_account);
         TextView username = findViewById(R.id.New_user_name);
@@ -51,8 +44,7 @@ public class New_Account extends AppCompatActivity  implements SharedPreferences
         Downloader verify = new Downloader(this,"https://blockchain.info/q/getsentbyaddress/"
                 +w.getAddress()+"?confirmations=6",u,w,"verify payment");
         verify.execute();
-        New_Users newUsers = New_Users.retrieve_user(database, CONSTANTS.username,u.getUsername());
-        username.setText(newUsers.getUsername());
+        username.setText(u.getUsername());
         email.setText(current_user.getEmail());
     }
 

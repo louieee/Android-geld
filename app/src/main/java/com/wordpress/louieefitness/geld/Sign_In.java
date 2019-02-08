@@ -1,9 +1,11 @@
 package com.wordpress.louieefitness.geld;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Network;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,10 +25,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Models.Level_1;
-import com.wordpress.louieefitness.geld.Models.New_Users;
-import com.wordpress.louieefitness.geld.Models.User;
 
 import java.util.Objects;
 
@@ -42,8 +41,7 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_sign_in);
         email_t = findViewById(R.id.email_t);
@@ -56,68 +54,90 @@ public class Sign_In extends AppCompatActivity  implements SharedPreferences.OnS
             if (!emailValid(email_t.getText().toString())){
                    email_t.setError("Enter a Valid Email");
             }else {
-                database.getReference("Users").orderByChild("Email").equalTo(email_t.getText().toString()).
-                        addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                        if (dataSnapshot1.child("Password").hasChild(password_t.getText().toString())) {
-                                            mAuth.signInWithEmailAndPassword(email_t.getText().toString(),
-                                                    password_t.getText().toString())
-                                                    .addOnCompleteListener(Sign_In.this, new OnCompleteListener<AuthResult>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                                            if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
-                                                                Toast.makeText(Sign_In.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
-                                                                switch (getIntent().getStringExtra("Key")) {
-                                                                    case Account.Key:
-                                                                        startActivity(new Intent(Sign_In.this, Account.class));
-                                                                        break;
-                                                                    case New_Account.Key:
-                                                                        startActivity(new Intent(Sign_In.this, New_Account.class));
-                                                                        break;
-                                                                    case Payment.Key:
-                                                                        startActivity(new Intent(Sign_In.this, Payment.class));
-                                                                        break;
-                                                                    case User_Wallet.Key:
-                                                                        startActivity(new Intent(Sign_In.this, User_Wallet.class));
-                                                                        break;
-                                                                    default:
-                                                                        switch (Objects.requireNonNull(dataSnapshot1.child("Level").getValue(String.class))) {
-                                                                            case New_Users.name:
-                                                                                if (!dataSnapshot1.child("Paid").getValue(Boolean.class)) {
-                                                                                    startActivity(new Intent(Sign_In.this, Payment.class));
-                                                                                    break;
-                                                                                } else {
-                                                                                    startActivity(new Intent(Sign_In.this, New_Account.class));
-                                                                                }
-                                                                            default:
+                final ProgressDialog pd = new ProgressDialog(Sign_In.this);
+                ConnectivityManager cm =
+                        (ConnectivityManager) Sign_In.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+                if (isConnected) {
+                    pd.setMessage("Signing "+email_t.getText().toString()+" in...");
+                    pd.show();
+                    database.getReference("Users").orderByChild("Email").equalTo(email_t.getText().toString()).
+                            addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                            if (dataSnapshot1.child("Password").hasChild(password_t.getText().toString())) {
+                                                mAuth.signInWithEmailAndPassword(email_t.getText().toString(),
+                                                        password_t.getText().toString())
+                                                        .addOnCompleteListener(Sign_In.this, new OnCompleteListener<AuthResult>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    pd.dismiss();
+                                                                    if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
+                                                                        Toast.makeText(Sign_In.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                                                                        switch (getIntent().getStringExtra("Key")) {
+                                                                            case Account.Key:
                                                                                 startActivity(new Intent(Sign_In.this, Account.class));
+                                                                                break;
+                                                                            case New_Account.Key:
+                                                                                startActivity(new Intent(Sign_In.this, New_Account.class));
+                                                                                break;
+                                                                            case Payment.Key:
+                                                                                startActivity(new Intent(Sign_In.this, Payment.class));
+                                                                                break;
+                                                                            case User_Wallet.Key:
+                                                                                startActivity(new Intent(Sign_In.this, User_Wallet.class));
+                                                                                break;
+                                                                            default:
+                                                                                switch (Objects.requireNonNull(dataSnapshot1.child("Level").getValue(String.class))) {
+                                                                                    case "Newbie":
+                                                                                        if (!dataSnapshot1.child("Paid").getValue(Boolean.class)) {
+                                                                                            startActivity(new Intent(Sign_In.this, Payment.class));
+                                                                                            break;
+                                                                                        } else {
+                                                                                            startActivity(new Intent(Sign_In.this, New_Account.class));
+                                                                                        }
+                                                                                    default:
+                                                                                        startActivity(new Intent(Sign_In.this, Account.class));
+                                                                                }
+
                                                                         }
-
+                                                                    }
+                                                                } else {
+                                                                    mAuth.signOut();
+                                                                    task.addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Toast.makeText(Sign_In.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
                                                                 }
-
-                                                            } else {
-                                                                mAuth.signOut();
-                                                                Toast.makeText(Sign_In.this, "Your Email has not been Verified", Toast.LENGTH_SHORT).show();
                                                             }
-                                                        }
-                                                    });
-                                        } else {
-                                            Toast.makeText(Sign_In.this, "Your Password is Incorrect", Toast.LENGTH_SHORT).show();
+                                                        });
+                                            } else {
+                                                pd.dismiss();
+                                                Toast.makeText(Sign_In.this, "Your Password is Incorrect", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
+                                    } else {
+                                        pd.dismiss();
+                                        Toast.makeText(Sign_In.this, "You Don't Have an Account", Toast.LENGTH_SHORT).show();
                                     }
-                                } else {
-                                    Toast.makeText(Sign_In.this, "You Don't Have an Account", Toast.LENGTH_SHORT).show();
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(Sign_In.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(Sign_In.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }else{
+                    Toast.makeText(Sign_In.this,"Check your Data Connection",Toast.LENGTH_SHORT).show();
+                }
             }
         }else{
             Toast.makeText(Sign_In.this, "All Fields must be Filled", Toast.LENGTH_SHORT).show();

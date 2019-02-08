@@ -14,20 +14,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Account;
 import com.wordpress.louieefitness.geld.Models.Level_1;
-import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
-
 import static com.wordpress.louieefitness.geld.Models.Level_1.Add;
 import static com.wordpress.louieefitness.geld.Models.Level_1.Update_no_received;
-import static java.net.URLDecoder.decode;
 
-public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
+
+    public class Pay_Verifier extends AsyncTask<FirebaseDatabase,Void,Boolean> {
     @SuppressLint("StaticFieldLeak")
     private Context c; private String JsonData; @SuppressLint("StaticFieldLeak")
      private User u;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private Level_1 ml;
-    private String the_key, oldest_key;
+    private String the_key;
     Pay_Verifier(Context c, String JsonData, User u){
         this.c = c;
         this.JsonData = JsonData;
@@ -40,8 +37,8 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Void... voids) {
-        return verify_payment();
+    protected Boolean doInBackground(FirebaseDatabase... DBs) {
+        return verify_payment(DBs[0]);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
         }
 
     }
-    private Boolean verify_payment() {
+    private Boolean verify_payment(FirebaseDatabase db) {
         Boolean result = false;
         Double Bal = Double.parseDouble(JsonData);
         Double Bal_btc = Bal / 100000000;
@@ -63,39 +60,36 @@ public class Pay_Verifier extends AsyncTask<Void,Void,Boolean> {
             //transfer user to Level 1
             Level_1 n_u = new Level_1();
             n_u.setUsername(u.getUsername());
-            //delete user from new users
-            String my_key = retrieve_object_key(New_Users.ref, "username", u.getUsername());
-            Delete_New_User(New_Users.ref, my_key);
             if (u.getReferer().isEmpty()){
-                Level_1 ref_ = Level_1.get_oldest_object();
+                Level_1 ref_ = Level_1.get_oldest_object(db);
                 if (ref_ != null) {
-                    Update_no_received(ref_.getUsername());
+                    Update_no_received(db,ref_.getUsername());
                     update_user(ref_.getUsername());
                 }
 
             }else {
                 //Check if referer no < 2 && if referer is in level1
-                Level_1 ref_ = Level_1.retrieve_object("Username",u.getReferer());
+                Level_1 ref_ = Level_1.retrieve_object(db,"Username",u.getReferer());
                 if (ref_ == null) {
-                    Level_1 ref__ = Level_1.get_oldest_object();
+                    Level_1 ref__ = Level_1.get_oldest_object(db);
                     if (ref__ != null) {
-                        Update_no_received(ref__.getUsername());
+                        Update_no_received(db,ref__.getUsername());
                         update_user(ref__.getUsername());
                     }
                 } else {
                     if (ref_.getNo_received() < 2) {
-                        Update_no_received(ref_.getUsername());
+                        Update_no_received(db,ref_.getUsername());
                     } else {
-                        Level_1 ref__ = Level_1.get_oldest_object();
+                        Level_1 ref__ = Level_1.get_oldest_object(db);
                         if (ref__ != null) {
-                            Update_no_received(ref__.getUsername());
+                            Update_no_received(db,ref__.getUsername());
                             update_user(ref__.getUsername());
                         }
                     }
                 }
                 result = true;
             }
-            Add(n_u);
+            Add(db,n_u);
         } else {
             result = false;
         }

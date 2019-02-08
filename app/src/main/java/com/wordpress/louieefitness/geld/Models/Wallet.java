@@ -85,12 +85,12 @@ public class Wallet {
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    if (childSnapshot.exists()) {
-                        the_wallet = childSnapshot.getValue(Wallet.class);
-                    }else{
-                        the_wallet = null;
+                if (!dataSnapshot.exists()) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                            the_wallet = childSnapshot.getValue(Wallet.class);
                     }
+                }else{
+                    the_wallet = null;
                 }
 
             }
@@ -108,10 +108,10 @@ public class Wallet {
         m_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    if (childSnapshot.exists()) {
-                        String key = childSnapshot.getKey();
-                        myRef.child(key).setValue(myWallet);
+                if (!dataSnapshot.exists()) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                            String key = childSnapshot.getKey();
+                            myRef.child(key).setValue(myWallet);
                     }
                 }
 

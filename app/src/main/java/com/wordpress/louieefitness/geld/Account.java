@@ -60,8 +60,7 @@ public class Account extends AppCompatActivity implements SharedPreferences.OnSh
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         FirebaseUser current_user = mAuth.getCurrentUser();
         setContentView(R.layout.activity_account);
         cash = findViewById(R.id.cash_out);

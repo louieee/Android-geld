@@ -24,7 +24,6 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.activity_settings);
 
     }

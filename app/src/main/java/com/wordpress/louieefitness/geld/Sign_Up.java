@@ -1,18 +1,21 @@
 package com.wordpress.louieefitness.geld;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,19 +25,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Models.Level_1;
-import com.wordpress.louieefitness.geld.Models.New_Users;
 import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
-
-import java.util.Objects;
-
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.wordpress.louieefitness.geld.Models.User.retrieve_user;
 import static com.wordpress.louieefitness.geld.Utilities.utilities.emailValid;
-
 public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
     public static String API_KEY = CONSTANTS.API_KEY;
     public static String GUID;
@@ -42,8 +38,6 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
     public static String PASSWORD;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
-    private User new_user;
-    private DatabaseReference UserRef;
     private String user_email,first_password, second_password;
     private String rec_que, rec_ans, refer_username, user_name;
     private TextInputEditText username,email,pass1,pass2,question,answer, referer_v;
@@ -52,9 +46,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         setupSharedPreferences();
-        database = FirebaseDatabase.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        UserRef = database.getReference(User.ref);
+        database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         username = findViewById(R.id.username);
         email = findViewById(R.id.email);
         pass1 = findViewById(R.id.password);
@@ -63,12 +55,14 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         answer = findViewById(R.id.answer);
         referer_v = findViewById(R.id.referer);
         Wallet geld_wallet =  Wallet.retrieve_wallet(database, "Email","louis.paul9095@gmail.com");
-        if (geld_wallet == null) {
-            Toast.makeText(this, "Please Check Your Data Connection", Toast.LENGTH_SHORT).show();
-        }else{
+        if (geld_wallet != null) {
             GUID = geld_wallet.getGuid();
             ADDRESS = geld_wallet.getAddress();
             PASSWORD = geld_wallet.getPassword();
+        }else{
+            GUID = "";
+            ADDRESS = "";
+            PASSWORD = "";
         }
 
     }
@@ -88,116 +82,127 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
             }else if(user_name.length() <6){
                 username.setError("Username must be at least 6 characters");
             }else {
-                database.getReference("User").orderByChild("Email").equalTo(user_email).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()){
-                            Toast.makeText(Sign_Up.this,"This Email is in Use by Another Account",Toast.LENGTH_SHORT).show();
-                        }else{
-                            //do proper sign in
-                        }
-                    }
+                final ProgressDialog pd = new ProgressDialog(Sign_Up.this);
+                ConnectivityManager cm =
+                        (ConnectivityManager) Sign_Up.this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-                /*User get_user = User.retrieve_user(database, CONSTANTS.username, user_name);
-                if (get_user == null) {
-                    if (first_password.equals(second_password)) {
-                        mAuth.createUserWithEmailAndPassword(user_email, first_password)
-                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+                if (isConnected) {
+                    pd.setTitle("Sign Up");
+                    pd.setMessage("Creating new Account for " + user_name + " ...");
+                    pd.show();
+                    database.getReference("User").orderByChild("Email").equalTo(user_email).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot1) {
+                            if (dataSnapshot1.exists()) {
+                                pd.dismiss();
+                                Toast.makeText(Sign_Up.this, "This Email is in Use by Another Account", Toast.LENGTH_SHORT).show();
+                            } else {
+                                database.getReference("Users").orderByChild("Username").equalTo(user_name).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification();
-                                            Log.d("Message", "createUserWithEmail:success");
-                                            new_user = new User();
-                                            new_user.setAnswer(rec_ans);
-                                            new_user.setEmail(user_email);
-                                            new_user.setQuestion(rec_que);
-                                            new_user.setPassword(first_password);
-                                            new_user.setUsername(user_name);
-                                            if (refer_username.isEmpty()) {
-                                                complete_sign_up();
-                                            } else {
-                                                User referer = retrieve_user(database, CONSTANTS.username,
-                                                        refer_username);
-                                                if (referer == null) {
-                                                    complete_sign_up();
-                                                } else {
-                                                    if (referer.getLevel().equals(Level_1.name)) {
-                                                        New_Users newUser = new New_Users(new_user.getUsername(), referer.getUsername());
-                                                        String db_id = UserRef.push().getKey();
-                                                        new_user.setReferer(referer.getUsername());
-                                                        UserRef.child(db_id).setValue(new_user);
-                                                        DatabaseReference New_userRef = database.getReference(New_Users.ref);
-                                                        String d_id = New_userRef.push().getKey();
-                                                        New_userRef.child(d_id).setValue(newUser);
-                                                        //create wallet start
-                                                        create_wallet();
-                                                        //create wallet stop
-                                                        Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-                                                        Intent payment = new Intent(Sign_Up.this, Sign_In.class);
-                                                        startActivity(payment);
-                                                    } else {
-                                                        complete_sign_up();
-                                                    }
-                                                }
-                                            }
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            pd.dismiss();
+                                            Toast.makeText(Sign_Up.this, "This Username is in Use by Another Account", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            // If sign in fails, display a message to the user.
-                                            Log.w("Message: ", "createUserWithEmail:failure", task.getException());
-                                            Toast.makeText(Sign_Up.this, Objects.requireNonNull(task.getException()).getMessage(),
-                                                    Toast.LENGTH_LONG).show();
+                                            if (first_password.equals(second_password)) {
+                                                mAuth.createUserWithEmailAndPassword(user_email, first_password)
+                                                        .addOnCompleteListener(Sign_Up.this, new OnCompleteListener<AuthResult>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    final User new_user = new User();
+                                                                    new_user.setLevel("Newbie");
+                                                                    new_user.setPassword(first_password);
+                                                                    new_user.setUsername(user_name);
+                                                                    new_user.setQuestion(rec_que);
+                                                                    new_user.setAnswer(rec_ans);
+                                                                    new_user.setEmail(user_email);
+                                                                    database.getReference("Level_1").orderByChild("Username").equalTo(refer_username).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                            if (dataSnapshot.exists()) {
+                                                                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                                                    if (snapshot.child("No_Received").getValue(Integer.class) < 2) {
+                                                                                        new_user.setReferer(refer_username);
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            String key = database.getReference("User").push().getKey();
+                                                                            database.getReference().child(key).setValue(new_user).addOnCompleteListener(Sign_Up.this, new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                    if (task.isSuccessful()) {
+                                                                                        pd.dismiss();
+                                                                                        Wallet user_wallet = new Wallet();
+                                                                                        user_wallet.setEmail(user_email);
+                                                                                        create_wallet(user_wallet, new_user);
+                                                                                    } else {
+                                                                                        task.addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                pd.dismiss();
+                                                                                                Toast.makeText(Sign_Up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                }
+                                                                            });
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(DatabaseError databaseError) {
+                                                                            Toast.makeText(Sign_Up.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+                                                                } else {
+                                                                    task.addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            pd.dismiss();
+                                                                            Toast.makeText(Sign_Up.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                            } else {
+                                                Toast.makeText(Sign_Up.this, "The two Passwords must be equal", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }
-                                });
-                    } else {
-                        Toast.makeText(Sign_Up.this, "The Two Passwords Must Match", Toast.LENGTH_LONG).show();
 
-                    }
-                } else {
-                    Toast.makeText(Sign_Up.this, "Username is already taken", Toast.LENGTH_LONG).show();
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Toast.makeText(Sign_Up.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(Sign_Up.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(Sign_Up.this, "Check Data Connection", Toast.LENGTH_SHORT).show();
                 }
             }
-            */
             }else{
             Toast.makeText(Sign_Up.this, "All Fields Must Be Filled", Toast.LENGTH_LONG).show();
+        }
+        }
 
-        }
-        }
-        public void complete_sign_up(){
-            Level_1 referer = Level_1.get_oldest_object(database);
-            New_Users newUser;
-            if (referer == null){
-                new_user.setReferer("");
-                newUser = new New_Users(new_user.getUsername(), "");
-            }else{
-                newUser = new New_Users(new_user.getUsername(), referer.getUsername());
-                new_user.setReferer(referer.getUsername());
-            }
-            String db_id = UserRef.push().getKey();
-            UserRef.child(db_id).setValue(new_user);
-            DatabaseReference New_userRef = database.getReference(New_Users.ref);
-            String d_id = New_userRef.push().getKey();
-            New_userRef.child(d_id).setValue(newUser);
-            create_wallet();
-            Toast.makeText(Sign_Up.this, "User Account Created Successfully", Toast.LENGTH_LONG).show();
-            Intent payment = new Intent(Sign_Up.this, Sign_In.class);
-            startActivity(payment);
-        }
-        public void create_wallet(){
-            Wallet be = new Wallet();
+
+        public void create_wallet(Wallet a_wallet, User user){
             Downloader b = new Downloader(Sign_Up.this,"https://blockchain.info/api/v2/create?" +
                     "password="+first_password+
-                    "&api_code="+API_KEY,
-                    new_user, be,"create wallet");
-            b.execute();
+                    "&api_code="+API_KEY, user, a_wallet,"create wallet");
+            b.execute(database);
         }
 
     public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
@@ -226,7 +231,7 @@ public class Sign_Up extends AppCompatActivity  implements SharedPreferences.OnS
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    public void exit (View v){
+    public void exit_app (View v){
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
                 .setTitle("Exit")
                 .setMessage("Are you sure you want to exit App? ")

@@ -40,8 +40,7 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         setContentView(R.layout.activity_payment);
         current_user = mAuth.getCurrentUser();
         assert current_user != null;
@@ -53,28 +52,6 @@ public class Payment extends AppCompatActivity  implements SharedPreferences.OnS
         wallet_info.setText(wallet_details);
     }
 
-    public String retrieve_object_key(String ref,String child, String Query){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = db.getReference(ref);
-        Query m_query = myRef.orderByChild(child).equalTo(Query);
-        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    the_key = childSnapshot.getKey();
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-                the_key = "";
-            }
-        });
-        return the_key;
-    }
     public void set_wallet_balance(Wallet wallet){
         Downloader get_bal = new Downloader(Payment.this,"https://blockchain.info/merchant/"
                 +wallet.getGuid()+"/balance?password="+wallet.getPassword(),null,wallet,"get balance");

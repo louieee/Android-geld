@@ -33,8 +33,7 @@ public class Forgot_Password extends AppCompatActivity  implements SharedPrefere
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         setContentView(R.layout.activity_forgot_password);
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         c = Forgot_Password.this;
         question = findViewById(R.id.pass_question);
         password = findViewById(R.id.pass_retrieve);

@@ -31,13 +31,12 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
     private Boolean checked;
     private FirebaseAuth mAuth;
     private TextInputEditText amount,receiver;
-    private FirebaseDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
         mAuth = FirebaseAuth.getInstance();
         c = User_Wallet.this;
         setContentView(R.layout.activity_wallet);
