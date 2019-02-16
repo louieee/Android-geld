@@ -17,9 +17,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class Downloader extends AsyncTask<FirebaseDatabase,Void,String> {
+public class Downloader extends AsyncTask<FirebaseDatabase, Void, String> {
     @SuppressLint("StaticFieldLeak")
-    private Context c; @SuppressLint("StaticFieldLeak")
+    private Context c;
+    @SuppressLint("StaticFieldLeak")
     private User u;
     private String urlAddress;
     private String action;
@@ -27,14 +28,13 @@ public class Downloader extends AsyncTask<FirebaseDatabase,Void,String> {
     private FirebaseDatabase db;
     private ProgressDialog pd;
 
-    public Downloader(Context c, String url, User u, Wallet wallet, String action){
+    public Downloader(Context c, String url, User u, Wallet wallet, String action) {
         this.c = c;
         this.urlAddress = url;
         this.u = u;
         this.action = action;
         this.wallet = wallet;
     }
-
 
 
     @Override
@@ -46,16 +46,20 @@ public class Downloader extends AsyncTask<FirebaseDatabase,Void,String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        String word = "" ;
-        switch (action){
+        String word = "";
+        switch (action) {
             case "send bitcon":
-                word = "Send Bitcoin";break;
+                word = "Send Bitcoin";
+                break;
             case "send money":
-                word = "Send Bitcoin";break;
+                word = "Send Bitcoin";
+                break;
             case "get balance":
-                word = "Bitcoin Balance";break;
+                word = "Bitcoin Balance";
+                break;
             case "create wallet":
-                word ="Sign Up";break;
+                word = "Sign Up";
+                break;
         }
 
         pd = new ProgressDialog(c);
@@ -66,37 +70,37 @@ public class Downloader extends AsyncTask<FirebaseDatabase,Void,String> {
     }
 
 
-
     @Override
     protected void onPostExecute(String JsonData) {
         super.onPostExecute(JsonData);
         pd.dismiss();
-        if (JsonData == null){
-            Toast.makeText(c,"Check your Data Connection",Toast.LENGTH_SHORT).show();
-        }else {
+        if (JsonData == null) {
+            Toast.makeText(c, "Check your Data Connection", Toast.LENGTH_SHORT).show();
+        } else {
             if (action.equals("verify payment")) {
-                Pay_Verifier pay_verifier = new Pay_Verifier(c, JsonData,u);
+                Pay_Verifier pay_verifier = new Pay_Verifier(c, JsonData, u);
                 pay_verifier.execute(db);
-            } else{
+            } else {
                 Data_Parser dataParser = new Data_Parser(c, JsonData, wallet, u, action);
-            dataParser.execute(db);
+                dataParser.execute(db);
             }
-            }
+        }
 
     }
-    private String downloadData(){
+
+    private String downloadData() {
         HttpURLConnection conn = Connector.connect_get(urlAddress);
-        if (conn == null){
+        if (conn == null) {
             return null;
         }
-        try{
+        try {
             InputStream is = new BufferedInputStream(conn.getInputStream());
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             String line;
             StringBuilder jsonData = new StringBuilder();
 
-            while ((line = br.readLine())!= null){
+            while ((line = br.readLine()) != null) {
                 jsonData.append(line).append("\n");
 
             }

@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 
 public class utilities {
 
-    public static StringBuilder StringBuild(HashMap<String, String> params){
+    public static StringBuilder StringBuild(HashMap<String, String> params) {
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
         for (String key : params.keySet()) {
             try {
-                if (i != 0){
+                if (i != 0) {
                     sbParams.append("&");
                 }
                 sbParams.append(key).append("=")
@@ -26,7 +26,8 @@ public class utilities {
         }
         return sbParams;
     }
-    public static Boolean emailValid(String email){
+
+    public static Boolean emailValid(String email) {
         Pattern pattern;
         Matcher matcher;
         final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";

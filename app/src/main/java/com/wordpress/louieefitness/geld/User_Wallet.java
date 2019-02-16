@@ -15,29 +15,23 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-import com.wordpress.louieefitness.geld.Models.CONSTANTS;
-import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
-import com.wordpress.louieefitness.geld.Utilities.Downloader;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class User_Wallet extends AppCompatActivity  implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class User_Wallet extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Context c;
     private Wallet myWallet;
     public final static String Key = "1";
     private Boolean checked;
     private FirebaseAuth mAuth;
-    private TextInputEditText amount,receiver;
+    private TextInputEditText amount, receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://geld-f5989.firebaseio.com");
-        mAuth = FirebaseAuth.getInstance();
         c = User_Wallet.this;
         setContentView(R.layout.activity_wallet);
         TextView e_mail = findViewById(R.id.wallet_email);
@@ -46,15 +40,9 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
         amount = findViewById(R.id.send_amount);
         receiver = findViewById(R.id.receiver_address);
         FirebaseUser current_user = mAuth.getCurrentUser();
-        if (current_user == null){
-            startActivity(new Intent(c,Sign_Up.class));
-        }else{
-            User fake = new User();
-            String email = current_user.getEmail();
-            myWallet = Wallet.retrieve_wallet(database, CONSTANTS.email, email);
-            Downloader get_bal = new Downloader(c,"https://blockchain.info/merchant/"
-                    + myWallet.getGuid()+"/balance?password="+ myWallet.getPassword(),fake, myWallet,"get balance");
-            get_bal.execute();
+        if (current_user == null) {
+            startActivity(new Intent(c, Sign_Up.class));
+        } else {
             e_mail.setText(myWallet.getEmail());
             address.setText(myWallet.getAddress());
             balance.setText(String.valueOf(myWallet.getBalance()));
@@ -62,16 +50,11 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
 
     }
 
-    public void Send_Bit_coin(View v){
-        if (amount.getText().toString().isEmpty() || receiver.getText().toString().isEmpty()){
-            Toast.makeText(c,"All Fields must be Filled",Toast.LENGTH_LONG).show();
-        }else{
-            String money = String.valueOf(Double.parseDouble(amount.getText().toString())*100000000);
-            Downloader sender = new Downloader(c, "https://blockchain.info/merchant/"+
-                    myWallet.getGuid()+"/payment?password="+
-                    myWallet.getPassword()+"&to="+receiver.getText().toString()+
-                    "&amount="+money,null, myWallet,"send money");
-            sender.execute();
+    public void Send_Bit_coin(View v) {
+        if (amount.getText().toString().isEmpty() || receiver.getText().toString().isEmpty()) {
+            Toast.makeText(c, "All Fields must be Filled", Toast.LENGTH_LONG).show();
+        } else {
+            String money = String.valueOf(Double.parseDouble(amount.getText().toString()) * 100000000);
 
         }
 
@@ -80,15 +63,17 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
 
     public void sharedPreferenceTheme(SharedPreferences sharedPreferences) {
         String value = sharedPreferences.getString(getString(R.string.Theme_key), getString(R.string.level_1));
-        if (value.equalsIgnoreCase("1")){
+        if (value.equalsIgnoreCase("1")) {
             getApplicationContext().setTheme(R.style.Light);
-        }else if (value.equalsIgnoreCase("2")){
+        } else if (value.equalsIgnoreCase("2")) {
             getApplicationContext().setTheme(R.style.Dark);
         }
     }
-    public void sharedPreferenceLock(SharedPreferences sharedPreferences){
-        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key),true);
+
+    public void sharedPreferenceLock(SharedPreferences sharedPreferences) {
+        checked = sharedPreferences.getBoolean(getString(R.string.Lock_key), true);
     }
+
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferenceTheme(sharedPreferences);
@@ -97,12 +82,13 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.Theme_key))){
+        if (key.equals(getString(R.string.Theme_key))) {
             sharedPreferenceTheme(sharedPreferences);
-        }else if (key.equals(getString(R.string.Lock_key))){
+        } else if (key.equals(getString(R.string.Lock_key))) {
             sharedPreferenceLock(sharedPreferences);
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -112,20 +98,22 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (checked){
-            getApplicationContext().startActivity(new Intent(getApplicationContext(),Sign_In.class)
-            .putExtra("key",Key));
+        if (checked) {
+            getApplicationContext().startActivity(new Intent(getApplicationContext(), Sign_In.class)
+                    .putExtra("key", Key));
         }
     }
-    public void open_settings (View v){
-        startActivity(new Intent(this,SettingsActivity.class));
+
+    public void open_settings(View v) {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
-    public void sign_out (View v){
+    public void sign_out(View v) {
         mAuth.signOut();
-        startActivity(new Intent(this,Sign_In.class));
+        startActivity(new Intent(this, Sign_In.class));
     }
-    public void exit (View v){
+
+    public void exit(View v) {
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
                 .setTitle("Exit")
                 .setMessage("Are you sure you want to exit App? ")
@@ -143,7 +131,8 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
                     }
                 }).show();
     }
-    public void toggle_nav (View v){
+
+    public void toggle_nav(View v) {
         final LinearLayout nav = findViewById(R.id.nav_bar);
         switch (nav.getVisibility()) {
             case VISIBLE:
@@ -156,8 +145,9 @@ public class User_Wallet extends AppCompatActivity  implements SharedPreferences
                 break;
         }
     }
-    public void open_account (View v){
-        startActivity(new Intent(this,Account.class));
+
+    public void open_account(View v) {
+        startActivity(new Intent(this, Account.class));
     }
 
 }

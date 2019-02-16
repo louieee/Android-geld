@@ -1,14 +1,5 @@
 package com.wordpress.louieefitness.geld.Models;
 
-import android.util.Log;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 public class Wallet {
     private String guid;
     private String address;
@@ -19,7 +10,7 @@ public class Wallet {
     private String password;
     private Double Balance = 0.0;
 
-    public Wallet(){
+    public Wallet() {
 
     }
 
@@ -79,72 +70,6 @@ public class Wallet {
     public void setBalance(Double balance) {
         Balance = balance;
     }
-    public static Wallet retrieve_wallet(FirebaseDatabase db,String child, String Query){
-        DatabaseReference myRef = db.getReference(Ref);
-        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
-        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                            the_wallet = childSnapshot.getValue(Wallet.class);
-                    }
-                }else{
-                    the_wallet = null;
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-            }
-        });
-        return the_wallet;
-    }
-    public static void update_wallet(FirebaseDatabase db,String child, String Query,final Wallet myWallet){
-        final DatabaseReference myRef = db.getReference(Ref);
-        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
-        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                            String key = childSnapshot.getKey();
-                            myRef.child(key).setValue(myWallet);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-            }
-        });
-    }
-    public static void delete_wallet(FirebaseDatabase db,String child, String Query){
-        final DatabaseReference myRef = db.getReference(Ref);
-        com.google.firebase.database.Query m_query = myRef.orderByChild(child).equalTo(Query);
-        m_query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    if (childSnapshot.exists()) {
-                        String key = childSnapshot.getKey();
-                        myRef.child(key).removeValue();
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("Message: ",databaseError.getMessage(),databaseError.toException());
-            }
-        });
-    }
-
 
 }
 

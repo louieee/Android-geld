@@ -3,14 +3,13 @@ package com.wordpress.louieefitness.geld.Utilities;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Connector {
-    public static HttpURLConnection connect_get(String urlAddress){
+    public static HttpURLConnection connect_get(String urlAddress) {
         try {
             URL url = new URL(urlAddress);
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             //conn props
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(20000);
@@ -19,13 +18,14 @@ public class Connector {
 
             return conn;
 
-        } catch (IOException i){
+        } catch (IOException i) {
             i.printStackTrace();
         }
         return null;
     }
-    public static HttpURLConnection connect_post(String url, StringBuilder Params){
-        try{
+
+    public static HttpURLConnection connect_post(String url, StringBuilder Params) {
+        try {
             URL urlObj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
             conn.setDoOutput(true);

@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class Downloader_Post extends AsyncTask<StringBuilder,Void,String> {
+public class Downloader_Post extends AsyncTask<StringBuilder, Void, String> {
     @SuppressLint("StaticFieldLeak")
     private Context c;
     @SuppressLint("StaticFieldLeak")
@@ -51,10 +51,10 @@ public class Downloader_Post extends AsyncTask<StringBuilder,Void,String> {
         if (JsonData == null) {
             Toast.makeText(c, "Check your Data Connection", Toast.LENGTH_SHORT).show();
         } else {
-                Data_Parser dataParser = new Data_Parser(c, JsonData, wallet, u, action);
-                dataParser.execute();
-            }
+            Data_Parser dataParser = new Data_Parser(c, JsonData, wallet, u, action);
+            dataParser.execute();
         }
+    }
 
     private String downloadData(StringBuilder params) {
         HttpURLConnection conn = Connector.connect_post(urlAddress, params);
