@@ -24,7 +24,7 @@ public class Connector {
         return null;
     }
 
-    public static HttpURLConnection connect_post(String url, StringBuilder Params) {
+    public static HttpURLConnection connect_post(String url, String Params) {
         try {
             URL urlObj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
@@ -37,10 +37,8 @@ public class Connector {
 
             conn.connect();
 
-            String paramsString = Params.toString();
-
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-            wr.writeBytes(paramsString);
+            wr.writeBytes(Params);
             wr.flush();
             wr.close();
             return conn;

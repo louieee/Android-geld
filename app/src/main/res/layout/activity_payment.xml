@@ -82,7 +82,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wallet Information"
+            android:text="Wallet Details"
             style="@style/Base.TextAppearance.AppCompat.Medium"
             android:padding="10dp"
             android:textAlignment="center"
@@ -96,18 +96,32 @@
             android:id="@+id/wallet_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wallet Info"
-            style="@style/TextAppearance.AppCompat.Body1"
+            android:text="Wallet Address"
+            android:gravity="center"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:padding="5dp">
+        </TextView>
+        <TextView
+            android:id="@+id/wallet_info2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wallet Balance"
+            android:gravity="center"
+            style="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/colorAccent"
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:padding="5dp">
         </TextView>
 
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/info"
+            android:text="@string/Info"
             style="@style/TextAppearance.AppCompat.Subhead"
             android:padding="10dp"
             android:textAlignment="center"

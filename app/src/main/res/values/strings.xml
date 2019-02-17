@@ -14,6 +14,7 @@
     <string name="level_1" translatable="false">1</string>
     <string name="level_2" translatable="false">2</string>
     <string name="Lock_pref">Lock App</string>
+    <string name="Info">Fund the Wallet Address Above before clicking the button below</string>
 
 
 </resources>

@@ -1,48 +1,68 @@
 package com.wordpress.louieefitness.geld;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wordpress.louieefitness.geld.Models.User;
 import com.wordpress.louieefitness.geld.Models.Wallet;
+import com.wordpress.louieefitness.geld.Utilities.Connector;
 import com.wordpress.louieefitness.geld.Utilities.Downloader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Objects;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class Payment extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String Key = "2";
-    private FirebaseAuth mAuth;
-    private FirebaseUser current_user;
-    private String the_key;
     private Boolean checked;
-    private FirebaseDatabase database;
-    private Wallet my_wallet;
+    private Context c = Payment.this;
+    TextView address, balance;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupSharedPreferences();
         setContentView(R.layout.activity_payment);
+        address = findViewById(R.id.wallet_info);
+        balance = findViewById(R.id.wallet_info2);
+        String user_username = Objects.requireNonNull(getIntent().getExtras()).getString("username");
+        String url = "http://127.0.0.1:8000/api/wallet/"+user_username+"/";
+        PaymentAsync getWallet = new PaymentAsync();
+        getWallet.execute(url);
+
+
 
     }
 
-    public void set_wallet_balance(Wallet wallet) {
-        Downloader get_bal = new Downloader(Payment.this, "https://blockchain.info/merchant/"
-                + wallet.getGuid() + "/balance?password=" + wallet.getPassword(), null, wallet, "get balance");
-        get_bal.execute();
-    }
 
     public void make_investment(View v) {
-        final Wallet be = new Wallet();
         android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
                 .setTitle("Invest")
                 .setMessage("Ensure that you have Funded your wallet with more than 0.003BTC." +
@@ -50,12 +70,10 @@ public class Payment extends AppCompatActivity implements SharedPreferences.OnSh
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Downloader invest = new Downloader(Payment.this, "https://blockchain.info/merchant/" +
-                                my_wallet.getGuid() + "/payment?password=" +
-                                my_wallet.getPassword() + "&to=" + Sign_Up.ADDRESS +
-                                "&amount=" + "250000", null, be, "send bitcoin");
-                        invest.execute();
-
+                        String user_username = Objects.requireNonNull(getIntent().getExtras()).getString("username");
+                        String url = "http://127.0.0.1:8000/api/payment/"+user_username+"/";
+                        PaymentAsync pay = new PaymentAsync();
+                        pay.execute(url);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -114,8 +132,22 @@ public class Payment extends AppCompatActivity implements SharedPreferences.OnSh
     }
 
     public void sign_out(View v) {
-        mAuth.signOut();
-        startActivity(new Intent(this, Sign_In.class));
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(this)
+                .setTitle("Sign Out")
+                .setMessage("Are you sure you want to sign out? ")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PaymentAsync logout = new PaymentAsync();
+                        String url = "http://127.0.0.1:8000/logout/";
+                        logout.execute(url);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
     }
 
     public void exit_app(View v) {
@@ -149,5 +181,96 @@ public class Payment extends AppCompatActivity implements SharedPreferences.OnSh
             case View.INVISIBLE:
                 break;
         }
+    }
+    @SuppressLint("StaticFieldLeak")
+    public class PaymentAsync extends AsyncTask<String,Void,HashMap<String,String>> {
+        @Override
+        protected HashMap<String, String> doInBackground(String... strings) {
+            return GetData(strings[0]);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(c);
+            pd.setMessage("Retrieving Data...");
+            pd.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<String, String> result) {
+            super.onPostExecute(result);
+            if (result.containsKey("Message")) {
+                pd.setMessage(result.get("Message"));
+                pd.dismiss();
+                Toast.makeText(c, result.get("Message"),Toast.LENGTH_SHORT).show();
+                if (result.get("Message").equals("You are currently logged out")){
+                    c.startActivity(new Intent(c, Sign_In.class));
+                }else if (result.containsKey("Notice")){
+                    c.startActivity(new Intent(c,New_Account.class));
+                }
+            }else {
+                pd.dismiss();
+                address.setText(result.get("address"));
+                balance.setText(result.get("balance"));
+            }
+
+        }
+
+        private HashMap<String, String> GetData(String urlAddress) {
+            HttpURLConnection conn = Connector.connect_get(urlAddress);
+            if (conn == null) {
+                return null;
+            }
+            try {
+                InputStream is = new BufferedInputStream(conn.getInputStream());
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+                String line;
+                StringBuilder jsonData = new StringBuilder();
+
+                while ((line = br.readLine()) != null) {
+                    jsonData.append(line).append("\n");
+
+                }
+                br.close();
+                is.close();
+                return parseData(jsonData.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        HashMap<String, String> parseData(String JsonData) {
+            try {
+                JSONObject j = new JSONObject(JsonData);
+                HashMap<String, String> data = new HashMap<>();
+                if (j.has("Message")){
+                    if (j.has("Notice")){
+                        String message = j.getString("Message");
+                        String notice = j.getString("Notice");
+                        data.put("Message", message);
+                        data.put("Notice", notice);
+                        return data;
+                    }else {
+                        String message = j.getString("Message");
+                        data.put("Message", message);
+                        return data;
+                    }
+                }else {
+                    String username = j.getString("username");
+                    String email = j.getString("email");
+                    data.put("username", username);
+                    data.put("email", email);
+                    return data;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
     }
 }
